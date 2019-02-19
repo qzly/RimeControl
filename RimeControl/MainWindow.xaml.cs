@@ -27,7 +27,6 @@ namespace RimeControl
     {
         public MainWindow()
         {
-            _backupRestoreResult = 0;
             InitializeComponent();
         }
 
