@@ -1,0 +1,17 @@
+﻿<Window x:Class="FontDialogSample.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Font Dialog Sample"
+    >
+    <DockPanel>
+        <ToolBar DockPanel.Dock="Top">
+            <Button Content="Font" Click="OnFontButtonClick"/>
+        </ToolBar>
+        <TextBox 
+            AcceptsReturn="True" 
+            TextWrapping="WrapWithOverflow" 
+            FontFamily="Palatino Linotype" 
+            FontSize="16" 
+            Name="textBox">The quick brown fox jumps over the lazy dog</TextBox>
+    </DockPanel>
+</Window>

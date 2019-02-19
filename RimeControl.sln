@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.329
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RimeControl", "RimeControl\RimeControl.csproj", "{406EEE96-98B3-4B2C-B2C3-FBD05E104426}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug-Net45|Any CPU = Debug-Net45|Any CPU
+		Debug-Net462|Any CPU = Debug-Net462|Any CPU
+		Debug-Net47|Any CPU = Debug-Net47|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Release-Net45|Any CPU = Release-Net45|Any CPU
+		Release-Net462|Any CPU = Release-Net462|Any CPU
+		Release-Net47|Any CPU = Release-Net47|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Debug-Net45|Any CPU.ActiveCfg = Debug|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Debug-Net45|Any CPU.Build.0 = Debug|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Debug-Net462|Any CPU.ActiveCfg = Debug|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Debug-Net462|Any CPU.Build.0 = Debug|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Debug-Net47|Any CPU.ActiveCfg = Debug|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Debug-Net47|Any CPU.Build.0 = Debug|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Release|Any CPU.Build.0 = Release|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Release-Net45|Any CPU.ActiveCfg = Release|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Release-Net45|Any CPU.Build.0 = Release|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Release-Net462|Any CPU.ActiveCfg = Release|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Release-Net462|Any CPU.Build.0 = Release|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Release-Net47|Any CPU.ActiveCfg = Release|Any CPU
+		{406EEE96-98B3-4B2C-B2C3-FBD05E104426}.Release-Net47|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6CC8A4DF-B7B5-4613-A74A-BA5D022F1493}
+	EndGlobalSection
+EndGlobal

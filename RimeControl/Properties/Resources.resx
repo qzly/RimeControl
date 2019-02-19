@@ -1,0 +1,407 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="simulated" xml:space="preserve">
+    <value>{0} (simulated)</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>KP_Add</value>
+    <comment>小键盘 +</comment>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>BackSpace</value>
+    <comment>退格 BackSpace键</comment>
+  </data>
+  <data name="Break" xml:space="preserve">
+    <value>Break</value>
+    <comment>中断*</comment>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>取消*</comment>
+  </data>
+  <data name="Capital" xml:space="preserve">
+    <value>Caps_Lock</value>
+    <comment>大写锁</comment>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Clear</value>
+    <comment>清除--关闭小键盘后的小键盘5键</comment>
+  </data>
+  <data name="D0" xml:space="preserve">
+    <value>0</value>
+    <comment>0</comment>
+  </data>
+  <data name="D1" xml:space="preserve">
+    <value>1</value>
+    <comment>1</comment>
+  </data>
+  <data name="D2" xml:space="preserve">
+    <value>2</value>
+    <comment>2</comment>
+  </data>
+  <data name="D3" xml:space="preserve">
+    <value>3</value>
+    <comment>3</comment>
+  </data>
+  <data name="D4" xml:space="preserve">
+    <value>4</value>
+    <comment>4</comment>
+  </data>
+  <data name="D5" xml:space="preserve">
+    <value>5</value>
+    <comment>5</comment>
+  </data>
+  <data name="D6" xml:space="preserve">
+    <value>6</value>
+    <comment>6</comment>
+  </data>
+  <data name="D7" xml:space="preserve">
+    <value>7</value>
+    <comment>7</comment>
+  </data>
+  <data name="D8" xml:space="preserve">
+    <value>8</value>
+    <comment>8</comment>
+  </data>
+  <data name="D9" xml:space="preserve">
+    <value>9</value>
+    <comment>9</comment>
+  </data>
+  <data name="Decimal" xml:space="preserve">
+    <value>KP_Decimal</value>
+    <comment>小键盘 . 小数点</comment>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+    <comment>刪除 Delete键</comment>
+  </data>
+  <data name="Divide" xml:space="preserve">
+    <value>KP_Divide</value>
+    <comment>小键盘 /</comment>
+  </data>
+  <data name="Down" xml:space="preserve">
+    <value>Down</value>
+    <comment>下键</comment>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>End</value>
+    <comment>End键</comment>
+  </data>
+  <data name="Escape" xml:space="preserve">
+    <value>Escape</value>
+    <comment>退出 ESC键</comment>
+  </data>
+  <data name="Execute" xml:space="preserve">
+    <value>Execute</value>
+    <comment>执行*</comment>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>Find</value>
+    <comment>查找*</comment>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
+    <comment>帮助*</comment>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+    <comment>Home键</comment>
+  </data>
+  <data name="Insert" xml:space="preserve">
+    <value>Insert</value>
+    <comment>Insert键</comment>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>Left</value>
+    <comment>左键</comment>
+  </data>
+  <data name="Linefeed" xml:space="preserve">
+    <value>Linefeed</value>
+    <comment>换行*</comment>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Menu</value>
+    <comment>菜单*</comment>
+  </data>
+  <data name="Multiply" xml:space="preserve">
+    <value>KP_Multiply</value>
+    <comment>小键盘 *</comment>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Page_Down</value>
+    <comment>Next键</comment>
+  </data>
+  <data name="NumLock" xml:space="preserve">
+    <value>Num_Lock</value>
+    <comment>小键盘锁</comment>
+  </data>
+  <data name="NumPad0" xml:space="preserve">
+    <value>KP_0</value>
+    <comment>小键盘 0</comment>
+  </data>
+  <data name="NumPad1" xml:space="preserve">
+    <value>KP_1</value>
+    <comment>小键盘 1</comment>
+  </data>
+  <data name="NumPad2" xml:space="preserve">
+    <value>KP_2</value>
+    <comment>小键盘 2</comment>
+  </data>
+  <data name="NumPad3" xml:space="preserve">
+    <value>KP_3</value>
+    <comment>小键盘 3</comment>
+  </data>
+  <data name="NumPad4" xml:space="preserve">
+    <value>KP_4</value>
+    <comment>小键盘 4</comment>
+  </data>
+  <data name="NumPad5" xml:space="preserve">
+    <value>KP_5</value>
+    <comment>小键盘 5</comment>
+  </data>
+  <data name="NumPad6" xml:space="preserve">
+    <value>KP_6</value>
+    <comment>小键盘 6</comment>
+  </data>
+  <data name="NumPad7" xml:space="preserve">
+    <value>KP_7</value>
+    <comment>小键盘 7</comment>
+  </data>
+  <data name="NumPad8" xml:space="preserve">
+    <value>KP_8</value>
+    <comment>小键盘 8</comment>
+  </data>
+  <data name="NumPad9" xml:space="preserve">
+    <value>KP_9</value>
+    <comment>小键盘 9</comment>
+  </data>
+  <data name="Oem1" xml:space="preserve">
+    <value>;</value>
+    <comment>;  --可能无效</comment>
+  </data>
+  <data name="Oem3" xml:space="preserve">
+    <value>grave</value>
+    <comment>` 键</comment>
+  </data>
+  <data name="Oem5" xml:space="preserve">
+    <value>\</value>
+    <comment>\  --可能无效</comment>
+  </data>
+  <data name="Oem6" xml:space="preserve">
+    <value>bracketright</value>
+    <comment>]</comment>
+  </data>
+  <data name="OemComma" xml:space="preserve">
+    <value>comma</value>
+    <comment>，</comment>
+  </data>
+  <data name="OemMinus" xml:space="preserve">
+    <value>minus</value>
+    <comment>-/_键</comment>
+  </data>
+  <data name="OemOpenBrackets" xml:space="preserve">
+    <value>bracketleft</value>
+    <comment>[</comment>
+  </data>
+  <data name="OemPeriod" xml:space="preserve">
+    <value>period</value>
+    <comment>。</comment>
+  </data>
+  <data name="OemPlus" xml:space="preserve">
+    <value>plus</value>
+    <comment>+/=键</comment>
+  </data>
+  <data name="OemQuestion" xml:space="preserve">
+    <value>slash</value>
+    <comment>/</comment>
+  </data>
+  <data name="OemQuotes" xml:space="preserve">
+    <value>apostrophe</value>
+    <comment>’</comment>
+  </data>
+  <data name="PageUp" xml:space="preserve">
+    <value>Page_Up</value>
+    <comment>PageUp键</comment>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pause</value>
+    <comment>暂停*</comment>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+    <comment>打印-无法捕捉</comment>
+  </data>
+  <data name="Redo" xml:space="preserve">
+    <value>Redo</value>
+    <comment>重做*</comment>
+  </data>
+  <data name="Return" xml:space="preserve">
+    <value>Return</value>
+    <comment>回车 enter键</comment>
+  </data>
+  <data name="Right" xml:space="preserve">
+    <value>Right</value>
+    <comment>右键</comment>
+  </data>
+  <data name="Scroll" xml:space="preserve">
+    <value>Scroll_Lock</value>
+    <comment>滚动锁</comment>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+    <comment>选定*</comment>
+  </data>
+  <data name="Shift_Lock" xml:space="preserve">
+    <value>Shift_Lock</value>
+    <comment>上档锁*</comment>
+  </data>
+  <data name="space" xml:space="preserve">
+    <value>space</value>
+    <comment>空</comment>
+  </data>
+  <data name="Subtract" xml:space="preserve">
+    <value>KP_Subtract</value>
+    <comment>小键盘 -</comment>
+  </data>
+  <data name="Sys_Req" xml:space="preserve">
+    <value>Sys_Req</value>
+    <comment>印屏*</comment>
+  </data>
+  <data name="Tab" xml:space="preserve">
+    <value>Tab</value>
+    <comment>水平定位符</comment>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Undo</value>
+    <comment>还原*</comment>
+  </data>
+  <data name="Up" xml:space="preserve">
+    <value>Up</value>
+    <comment>上键</comment>
+  </data>
+  <data name="app_version" xml:space="preserve">
+    <value>20190219</value>
+    <comment>版本</comment>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="rime" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\rime.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+</root>

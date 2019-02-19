@@ -1,0 +1,90 @@
+﻿<Window x:Class="FontDialogSample.FontChooser"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="字体选择" 
+        Width="640" Height="600"
+        Background="{x:Static SystemColors.ControlBrush}" 
+        WindowStartupLocation="CenterScreen"
+    >
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="0.5*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Row 0: Selection controls -->
+        <Grid Grid.Column="0" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="7*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="4*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Families -->
+            <Label Grid.Column="0" Grid.Row="0" Content="_字体："/>
+            <DockPanel Grid.Column="0" Grid.Row="1" Grid.RowSpan="3">
+                <TextBox DockPanel.Dock="Top" Name="FontFamilyTextBox"/>
+                <ListBox Name="FontFamilyList"/>
+            </DockPanel>
+
+            <!-- Family Typefaces (weight, style, stretch) -->
+            <Label Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" Content="_字形:"/>
+            <ListBox Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="3" Name="TypefaceList"/>
+
+            <!-- Font sizes -->
+            <Label Grid.Column="2" Grid.Row="2" Content="_大小:"/>
+            <DockPanel Grid.Column="2" Grid.Row="3">
+                <TextBox DockPanel.Dock="Top" Name="SizeTextBox"/>
+                <ListBox Name="SizeList" Margin="0,0,0,11.817"/>
+            </DockPanel>
+        </Grid>
+
+        <!-- Row 1: Tab control with family typeface samples, etc. -->
+
+
+        <!-- Row 2: Preview text -->
+        <DockPanel Grid.Column="0" Grid.Row="1" Margin="0,12,0,0">
+            <TextBlock DockPanel.Dock="Top">预览:（  注意：字形和大小都只是预览字体用，不会保存（这里的字体大小和小狼毫的字体有点不同）。见谅！）</TextBlock>
+            <TextBox
+                FontSize="16"
+                TextWrapping="Wrap"
+                Name="PreviewTextBox"
+                IsReadOnly="True"
+                Text="1 2 3 4 5 6 7 8 9 0&#x0a;a b c d e f g h i j k l m n o p q r s t u v w x y z&#x0a;A B C D E F G H I J K L M N O P Q R S T U V W  X Y Z&#x0a;这是中文的预览&#x0a;注意：字形和大小都只是预览字体用，不会保存（这里的字体大小和小狼毫的字体有点不同）。见谅！"
+                ></TextBox>
+        </DockPanel>
+
+        <!-- Row 3: OK and Cancel buttons -->
+        <StackPanel Grid.Column="0" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,10,7">
+            <Grid Name="typographyFeaturePage" Width="10" Height="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="96"/>
+                    <ColumnDefinition/>
+                    <!-- The grid contents for each feature are filled in programmatically -->
+                </Grid.ColumnDefinitions>
+            </Grid>
+            <TabControl Margin="0,12,0,0" Name="TabControl" Visibility="Hidden">
+                <TabItem Header="Typographic Features" Name="TypographyTab">
+                    <Grid>
+                        <!-- Feature page -->
+                        <Border BorderThickness="1" BorderBrush="{x:Static SystemColors.ControlDarkDarkBrush}">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto"></ScrollViewer>
+                        </Border>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+            <Button Content="确认" Width="86" IsDefault="True" Click="OnOKButtonClicked"/>
+            <Button Content="取消" Width="86" Click="OnCancelButtonClicked"/>
+        </StackPanel>
+
+    </Grid>
+</Window>
