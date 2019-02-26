@@ -44,7 +44,8 @@ namespace RimeControl.Utils
                         Node nodeC = new Node
                         {
                             isComment = true,
-                            name = line.Trim()
+                            name = line.Trim(),
+                            space = FindPreSpace(line)
                         };
                         this.nodeList.Add(nodeC);
                         continue;
@@ -95,6 +96,11 @@ namespace RimeControl.Utils
                             }
                         }
                         
+                    }
+
+                    if (node.name== "schema_id")
+                    {
+
                     }
                     //设置父节点
                     node.parent = FindParent(node.space);

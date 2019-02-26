@@ -70,7 +70,7 @@ namespace RimeControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 20190219 的本地化字符串。
+        ///   查找类似 20190226 的本地化字符串。
         /// </summary>
         public static string app_version {
             get {

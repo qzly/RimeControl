@@ -323,8 +323,8 @@
                               CellEditEnding="DataGridSchema_CellEditEnding">
                         <DataGrid.Columns>
                             <!--<DataGridCheckBoxColumn Binding="{Binding isUsing}" Header="使用中" Width="48" IsReadOnly="True" />-->
-                            <DataGridCheckBoxColumn Binding="{Binding isSys}" Header="预设" Width="56" IsReadOnly="True" />
-                            <DataGridTextColumn Binding="{Binding schema_id}" Header="法方案ID" IsReadOnly="True"   Width="140"/>
+                            <!--<DataGridCheckBoxColumn Binding="{Binding isSys}" Header="预设" Width="56" IsReadOnly="True" />-->
+                            <DataGridTextColumn Binding="{Binding schema_id}" Header="法方案ID" IsReadOnly="True"   Width="196"/>
                             <DataGridTextColumn Binding="{Binding name}" Header="方案名称" IsReadOnly="True"   Width="170"/>
                             <DataGridTextColumn Binding="{Binding version}" Header="版本" IsReadOnly="True"  Width="100"/>
                             <DataGridTextColumn Binding="{Binding dependencies}" Header="依赖" IsReadOnly="True" Width="140" />
@@ -382,8 +382,9 @@
                     <Label Content="版本：" FontSize="16" Margin="20,150,0,0" Height="auto" VerticalAlignment="Top" Padding="0" Name="LblVersionAbout"/>
                     <Label Content="作者：qzly " FontSize="16" Margin="20,180,0,0" Height="auto" VerticalAlignment="Top" Padding="0"/>
                     <Button Content="GitHub" FontSize="16" Margin="100,180,529,0" VerticalAlignment="Top" Padding="0" Name="BtnGitHub" BorderThickness="0" Foreground="#0078D7" FontWeight="Bold" Cursor="Hand" Click="BtnGitHub_Click"/>
-                    <Label  FontSize="16" Margin="20,210,0,0"  VerticalAlignment="Top" Padding="0">
-                        <TextBlock Margin="0" TextWrapping="Wrap" Text="说明：这个工具最开始于2016初，是我自学C#的练习项目；之后我就忙着毕业、实习、工作就一直没时间管,非常抱歉。2019年春节重新维护了一下。"  />
+                    <Label Content="邮箱:  1396715343@qq.com " FontSize="16" Margin="20,210,0,0" Height="auto" VerticalAlignment="Top" Padding="0"/>
+                    <Label  FontSize="16" Margin="20,240,0,0"  VerticalAlignment="Top" Padding="0">
+                        <TextBlock Margin="0" TextWrapping="Wrap" Text="说明：这个工具最开始于2016初，是我自学C#的练习项目；之后我就忙着毕业、实习、工作就一直没时间管,非常抱歉。2019年春节重新维护了一下。如果遇到问题或者有什么建议，可以在GitHub的issues反馈或者发邮件到邮箱，我尽量改善，感谢！"  />
                     </Label>
                 </Grid>
             </TabItem>

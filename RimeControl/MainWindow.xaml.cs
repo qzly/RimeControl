@@ -35,6 +35,8 @@ namespace RimeControl
         private string _strUserFolderPath = "";      //小狼毫输入法的用户目录路径
         private string _strRootFolderPath = "";      //小狼毫输入法root目录路径
         //public readonly string StrProjectRootPath = AppDomain.CurrentDomain.BaseDirectory;      //程序运行目录
+        //获取用户应用程序目录中的Rime目录  C:\Users\用户名\AppData\Roaming\Rime
+        string _userRoamingFolderRime = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+ "\\Rime";
 
         private string _strUserDefaultCustomPath = "\\default.custom.yaml";     //default.custom.yaml的文件路径 
         private string _strUserWeaselCustomPathPath = "\\weasel.custom.yaml";     //weasel.custom.yaml的文件  路径
@@ -377,8 +379,8 @@ namespace RimeControl
         {
             GeneralSetting();//常规设置的载入
             LoadSchemes();//载入皮肤数据
-            LoadSchemas();
-            LoadBackInfo();
+            LoadSchemas();//载入方案信息
+            LoadBackInfo();//载入备份信息
         }
         /// <summary>
         /// 常规设置的载入
@@ -665,21 +667,37 @@ namespace RimeControl
         private void LoadSchemas()
         {
             //===读取 安装目录\data\ 下所有  *.schema.yaml文件获取所有方案
-            List<Schema> installSchemaList = ReadAllSchemaYaml(_strRootFolderPath + "\\data", true);
-            _listSchemaList = new ObservableCollection<Schema>(installSchemaList);
+            List<Schema> installSchemaList = ReadAllSchemaYaml(_strRootFolderPath + "\\data", true,false);
 
-            //===读取用户目录下 下所有  *.schema.yaml文件
-            List<Schema> userSchemaListT = ReadAllSchemaYaml(_strUserFolderPath + "\\build", false);
-
+            //===读取用户配置目录下 下所有  *.schema.yaml文件
+            List<Schema> userSchemaListT = ReadAllSchemaYaml(_strUserFolderPath + "\\build", false,false);
+            
             //Linq not in查询出 在userSchemaListT列表中而不在installSchemaList列表中的 Schema，就是用户自行添加的Schema
             List<Schema> userSchemaList = (from tbUserSchemaListT in userSchemaListT
                                            where !(from tbInstallSchemaList in installSchemaList select tbInstallSchemaList.schema_id).Contains(tbUserSchemaListT.schema_id)
                                            select tbUserSchemaListT).ToList();
             foreach (Schema item in userSchemaList)
             {
-                item.isSys = false;//非Rime自带Schema
-                _listSchemaList.Add(item);
+                //item.isSys = false;//非Rime自带Schema
+                installSchemaList.Add(item);
             }
+
+            //===读取用户Roaming\Rime目录下的配置文件
+            if (Directory.Exists(_userRoamingFolderRime))
+            {
+                List<Schema> roamingSchemaList = ReadAllSchemaYaml(_userRoamingFolderRime, false, true);
+                //Linq not in查询出 在roamingSchemaList列表中而不在installSchemaList列表中的 Schema，就是用户自行添加的Schema
+                List<Schema> rsT = (from tbRst in roamingSchemaList
+                                    where !(from tbInstallSchemaList in installSchemaList select tbInstallSchemaList.schema_id).Contains(tbRst.schema_id)
+                    select tbRst).ToList();
+                foreach (Schema item in rsT)
+                {
+                    //item.isSys = false;//非Rime自带Schema
+                    installSchemaList.Add(item);
+                }
+            }
+
+            _listSchemaList = new ObservableCollection<Schema>(installSchemaList);
             //====读取用户正在使用的Schema id  用户目录下build\default.yaml key:schema_list
             YAML.Node nodeSchemaList = _yamlUserDefaultFile.FindNodeByKey("schema_list");
             List<YAML.Node> schemaList = _yamlUserDefaultFile.nodeList.Where(n => n.parent == nodeSchemaList).ToList();
@@ -689,12 +707,12 @@ namespace RimeControl
              select tbListSchemaList)
              .ToList()
              .ForEach(sScheme => { sScheme.isUsing = true; sScheme.isSelect = true; });
-
+            
 
             DataGridSchema.ItemsSource = _listSchemaList;
         }
 
-        private List<Schema> ReadAllSchemaYaml(string dirPath, bool isSys)
+        private List<Schema> ReadAllSchemaYaml(string dirPath, bool isSys,bool inRoaming)
         {
             List<Schema> listR = new List<Schema>();
             if (Directory.Exists(dirPath))
@@ -715,8 +733,17 @@ namespace RimeControl
 
                         YAML tempSchemaYaml = new YAML(file.FullName);
                         //Schema id
-                        string tId = tempSchemaYaml.Read("schema.schema_id").Split('#')[0].Trim();
-                        schema.schema_id = tId;
+                        try
+                        {
+
+                            string tId = tempSchemaYaml.Read("schema.schema_id").Split('#')[0].Trim();
+                            schema.schema_id = tId;
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                            string t_schema_id = tempSchemaYaml.Read("schema.schema_id");
+                        }
                         //Schema 名称
                         schema.name = Tools.RemoveFirstLastQuotationMarks(tempSchemaYaml.Read("schema.name"));
                         //Schema 版本
@@ -761,6 +788,7 @@ namespace RimeControl
                                 schema.dependencies = schema.dependencies.Substring(0, schema.dependencies.Count() - 1);
                             }
                             schema.isSys = isSys;
+                            schema.inRoaming = inRoaming;
                             listR.Add(schema);
                         }
                     }
@@ -976,18 +1004,51 @@ namespace RimeControl
 
                 #region 输入法方案 Schema 部分
 
+                /**
+                 * 2019年2月26日20:28:59
+                 * 修复在初始配置下，第一次配置时（patch.schema_list不存在时）以下配置信息无法保存
+                 * menu/page_size 
+                 * ascii_composer/good_old_caps_lock
+                 * ascii_composer/switch_key/Caps_Lock
+                 * ascii_composer/switch_key/Control_L
+                 * ascii_composer/switch_key/Control_R
+                 * ascii_composer/switch_key/Eisu_toggle
+                 * ascii_composer/switch_key/Shift_L
+                 * ascii_composer/switch_key/Shift_R
+                 * switcher/caption
+                 */
                 //移除default.custom.yaml 中 patch.schema_list 的所有子节点
                 YAML.Node schemaListNode = _yamlUserDefaultCustomFile.FindNodeByKey("patch.schema_list");
-                List<YAML.Node> removeSchemaNodes = _yamlUserDefaultCustomFile.nodeList.Where(rn => rn.parent == schemaListNode).ToList();
-                foreach (YAML.Node removeNode in removeSchemaNodes)
+                if (schemaListNode!=null)
                 {
-                    _yamlUserDefaultCustomFile.nodeList.Remove(removeNode);
+                    List<YAML.Node> removeSchemaNodes = _yamlUserDefaultCustomFile.nodeList.Where(rn => rn.parent == schemaListNode).ToList();
+                    foreach (YAML.Node removeNode in removeSchemaNodes)
+                    {
+                        _yamlUserDefaultCustomFile.nodeList.Remove(removeNode);
+                    }
                 }
 
                 //将勾选的Schema 的id写入default.custom.yaml 中 patch.schema_list
                 List<Schema> saveSchemas = _listSchemaList.Where(schema => schema.isSelect).ToList();
                 foreach (Schema saveSchema in saveSchemas)
                 {
+                    //如果在 Roaming\Rime目录中把它复制到 用户配置文件夹
+                    if (saveSchema.inRoaming)
+                    {
+                        string schemaFileFromPath = _userRoamingFolderRime + "\\" + saveSchema.schema_id + ".schema.yaml";
+                        string schemaFileToPath=_strUserFolderPath + "\\" + saveSchema.schema_id + ".schema.yaml";
+                        if (File.Exists(schemaFileFromPath))
+                        {
+                            try
+                            {
+                                File.Copy(schemaFileFromPath, schemaFileToPath,false);
+                            }
+                            catch (Exception exception)
+                            {
+                                Console.WriteLine(exception);
+                            }
+                        }
+                    }
                     _yamlUserDefaultCustomFile.Add("patch.schema_list.- schema: " + saveSchema.schema_id, "", true);
                 }
 
@@ -1001,7 +1062,7 @@ namespace RimeControl
             }
             catch (Exception ex)
             {
-                MessageBox.Show("保存失败！程序Log目录下最新的日志文件记录了错误代码，请联系开发者。考虑不周，抱歉。", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("保存失败！程序Log目录下最新的日志文件记录了错误代码，请联系开发者 Email:1396715343@qq.com。考虑不周，抱歉。", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                 ExceptionLog.WriteLog(ex);
             }
         }
@@ -1773,7 +1834,7 @@ namespace RimeControl
 
         private void BtnGitHub_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/qzly");
+            System.Diagnostics.Process.Start("https://github.com/qzly/RimeControl");
         }
 
         #endregion

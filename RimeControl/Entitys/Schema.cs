@@ -60,5 +60,9 @@ namespace RimeControl.Entitys
         /// 依赖的Schema Id数组
         /// </summary>
         public string dependencies { get; set; }
+        /// <summary>
+        /// 是否在Roaming\Rime目录
+        /// </summary>
+        public bool inRoaming { get; set; }
     }
 }
