@@ -316,23 +316,26 @@
             <TabItem Header="    方案    ">
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="3*"></RowDefinition>
                         <RowDefinition Height="1*"></RowDefinition>
                         <RowDefinition Height="25"></RowDefinition>
                     </Grid.RowDefinitions>
                     <DataGrid Name="DataGridSchema" Grid.Row="0" Margin="0" AutoGenerateColumns="False" RowDetailsVisibilityMode="VisibleWhenSelected" CanUserAddRows="False" 
-                              CellEditEnding="DataGridSchema_CellEditEnding">
+                              CellEditEnding="DataGridSchema_CellEditEnding" SelectionChanged="DataGridSchema_SelectionChanged" SelectionMode="Single">
                         <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Binding="{Binding isSelect}" Header="启用否" x:Name="ColCkbSelect"/>
                             <!--<DataGridCheckBoxColumn Binding="{Binding isUsing}" Header="使用中" Width="48" IsReadOnly="True" />-->
                             <!--<DataGridCheckBoxColumn Binding="{Binding isSys}" Header="预设" Width="56" IsReadOnly="True" />-->
-                            <DataGridTextColumn Binding="{Binding schema_id}" Header="法方案ID" IsReadOnly="True"   Width="196"/>
                             <DataGridTextColumn Binding="{Binding name}" Header="方案名称" IsReadOnly="True"   Width="170"/>
+                            <DataGridTextColumn Binding="{Binding schema_id}" Header="法方案ID" IsReadOnly="True"   Width="196"/>
                             <DataGridTextColumn Binding="{Binding version}" Header="版本" IsReadOnly="True"  Width="100"/>
                             <DataGridTextColumn Binding="{Binding dependencies}" Header="依赖" IsReadOnly="True" Width="140" />
-                            <DataGridCheckBoxColumn Binding="{Binding isSelect}" Header="启用否" x:Name="ColCkbSelect"/>
                         </DataGrid.Columns>
-                        <DataGrid.RowDetailsTemplate>
+                        <!--<DataGrid.RowDetailsTemplate>
                             <DataTemplate>
-                                <!--<Border Background="BlanchedAlmond" BorderThickness="0" Padding="80,0,0,0">-->
+                                -->
+                        <!--<Border Background="BlanchedAlmond" BorderThickness="0" Padding="80,0,0,0">-->
+                        <!--
                                 <Border Background="#DCEEF7" BorderThickness="0" Padding="80,0,0,0">
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock FontSize="12" Text="作者："  />
@@ -342,10 +345,12 @@
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
-                        </DataGrid.RowDetailsTemplate>
+                        </DataGrid.RowDetailsTemplate>-->
                     </DataGrid>
 
-                    <TextBlock Grid.Row="1" Text="注意：勾选【启用】后一定要在非当前行点一下，这样最后勾选后的才能起效。" VerticalAlignment="Center" Foreground="Red"></TextBlock>
+                    <TextBox Name="TbSchameInfo" Grid.Row="1" Text="" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"></TextBox>
+
+                    <TextBlock Grid.Row="2" Text="注意：勾选【启用】后一定要在非当前行点一下，这样最后勾选后的才能起效。" VerticalAlignment="Center" Foreground="Red"></TextBlock>
                 </Grid>
             </TabItem>
             <TabItem Header="    备份    " >

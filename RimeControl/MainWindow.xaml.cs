@@ -1863,5 +1863,17 @@ namespace RimeControl
             }
 
         }
+
+        private void DataGridSchema_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Schema selectedSchema = DataGridSchema.SelectedItems[0] as Schema;
+
+            string strText = "作者："+ Environment.NewLine;
+            strText += selectedSchema.author ;
+            strText += Environment.NewLine + "描述："+ Environment.NewLine;
+            strText += selectedSchema.description;
+
+            TbSchameInfo.Text = strText;
+        }
     }
 }
