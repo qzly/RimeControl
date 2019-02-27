@@ -8,8 +8,8 @@
         xmlns:userControl="clr-namespace:RimeControl.UserControl"
         mc:Ignorable="d"
         Title="RimeControl" Height="620" MaxHeight="620" MinHeight="620"  Width="800" MaxWidth="800" MinWidth="800"
-        ResizeMode="CanMinimize"
-        Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+        ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded" Closing="Window_Closing">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -318,12 +318,20 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="3*"></RowDefinition>
                         <RowDefinition Height="1*"></RowDefinition>
-                        <RowDefinition Height="25"></RowDefinition>
+                        <!--<RowDefinition Height="25"></RowDefinition>-->
                     </Grid.RowDefinitions>
                     <DataGrid Name="DataGridSchema" Grid.Row="0" Margin="0" AutoGenerateColumns="False" RowDetailsVisibilityMode="VisibleWhenSelected" CanUserAddRows="False" 
-                              CellEditEnding="DataGridSchema_CellEditEnding" SelectionChanged="DataGridSchema_SelectionChanged" SelectionMode="Single">
+                             SelectionChanged="DataGridSchema_SelectionChanged" SelectionMode="Single">
                         <DataGrid.Columns>
-                            <DataGridCheckBoxColumn Binding="{Binding isSelect}" Header="启用否" x:Name="ColCkbSelect"/>
+                            <!--自定义CheckBox列 加 UpdateSourceTrigger=PropertyChanged 结束DataGridSchema的编辑状态，解决“选【启用】后一定要在非当前行点一下，这样最后勾选后的才能起效。”的问题 -->
+                            <!--<DataGridCheckBoxColumn Binding="{Binding isSelect,UpdateSourceTrigger=PropertyChanged}" Width="60"  Header="启用否" x:Name="ColCkbSelect" />-->
+                            <DataGridTemplateColumn Width="60"  Header="启用否">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox HorizontalAlignment="Center" Click="ColCkbSelect_Click"  IsChecked="{Binding isSelect,UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <!--<DataGridCheckBoxColumn Binding="{Binding isUsing}" Header="使用中" Width="48" IsReadOnly="True" />-->
                             <!--<DataGridCheckBoxColumn Binding="{Binding isSys}" Header="预设" Width="56" IsReadOnly="True" />-->
                             <DataGridTextColumn Binding="{Binding name}" Header="方案名称" IsReadOnly="True"   Width="170"/>
@@ -348,9 +356,9 @@
                         </DataGrid.RowDetailsTemplate>-->
                     </DataGrid>
 
-                    <TextBox Name="TbSchameInfo" Grid.Row="1" Text="" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"></TextBox>
+                    <TextBox Name="TbSchemaInfo" Grid.Row="1" Text="" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"></TextBox>
 
-                    <TextBlock Grid.Row="2" Text="注意：勾选【启用】后一定要在非当前行点一下，这样最后勾选后的才能起效。" VerticalAlignment="Center" Foreground="Red"></TextBlock>
+                    <!--<TextBlock Grid.Row="2" Text="注意：勾选【启用】后一定要在非当前行点一下，这样最后勾选后的才能起效。" VerticalAlignment="Center" Foreground="Red"></TextBlock>-->
                 </Grid>
             </TabItem>
             <TabItem Header="    备份    " >

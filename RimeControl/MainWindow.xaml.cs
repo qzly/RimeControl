@@ -15,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Xceed.Wpf.Toolkit;
+using CheckBox = System.Windows.Controls.CheckBox;
 using MessageBox = System.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
 
@@ -36,7 +37,7 @@ namespace RimeControl
         private string _strRootFolderPath = "";      //小狼毫输入法root目录路径
         //public readonly string StrProjectRootPath = AppDomain.CurrentDomain.BaseDirectory;      //程序运行目录
         //获取用户应用程序目录中的Rime目录  C:\Users\用户名\AppData\Roaming\Rime
-        string _userRoamingFolderRime = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+ "\\Rime";
+        private readonly string _userRoamingFolderRime = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+ "\\Rime";
 
         private string _strUserDefaultCustomPath = "\\default.custom.yaml";     //default.custom.yaml的文件路径 
         private string _strUserWeaselCustomPathPath = "\\weasel.custom.yaml";     //weasel.custom.yaml的文件  路径
@@ -95,6 +96,7 @@ namespace RimeControl
 
             #region 查找用户配置目录
 
+
             //==开始读取注册表信息
             var myRegistryKey = Registry.CurrentUser;
             //读取Software\\Rime\\Weasel  win10下rime注册表是这个路径
@@ -105,11 +107,18 @@ namespace RimeControl
                 {
                     _strUserFolderPath = myReg.GetValue("RimeUserDir").ToString();
                     myReg.Close();//关闭注册表阅读器
+                    //检查文件是否存在
+                    bolTrues = File.Exists(_strUserFolderPath + "\\build\\default.yaml");
+                    if (!bolTrues)
+                    {
+                        _strUserFolderPath = "";
+                    }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 _strUserFolderPath = "";
+                Console.WriteLine(ex);
             }
 
             //判断_strUserFolderPath是否为null或空字符
@@ -117,9 +126,8 @@ namespace RimeControl
             if (string.IsNullOrEmpty(_strUserFolderPath))
             {
                 //获取系统用户目录
-                string userAppDataPath = Environment.GetEnvironmentVariable("AppData");
-                _strUserFolderPath = userAppDataPath + "\\Rime";
-                bolTrues = File.Exists(_strUserFolderPath + "\\default.yaml");
+                _strUserFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)  + "\\Rime";
+                bolTrues = File.Exists(_strUserFolderPath + "\\build\\default.yaml");
                 if (!bolTrues)
                 {
                     _strUserFolderPath = "";
@@ -371,6 +379,7 @@ namespace RimeControl
         #endregion
 
         #region 读取数据并绑定
+        
 
         /// <summary>
         /// 设置数据读取绑定
@@ -378,8 +387,16 @@ namespace RimeControl
         private void SettingLoad()
         {
             GeneralSetting();//常规设置的载入
+
             LoadSchemes();//载入皮肤数据
-            LoadSchemas();//载入方案信息
+
+            //载入方案信息
+            //LoadSchemas();
+            BackgroundWorker bwLoadSchemas = new BackgroundWorker();
+            bwLoadSchemas.DoWork += LoadSchemas;//执行的任务
+            bwLoadSchemas.RunWorkerCompleted += LoadSchemasCompleted;//任务执行完成后的回调
+            bwLoadSchemas.RunWorkerAsync();//开始执行后台任务
+
             LoadBackInfo();//载入备份信息
         }
         /// <summary>
@@ -664,7 +681,7 @@ namespace RimeControl
         /// <summary>
         /// 输入法方案 Schema载入
         /// </summary>
-        private void LoadSchemas()
+        private void LoadSchemas(object sender, DoWorkEventArgs e)
         {
             //===读取 安装目录\data\ 下所有  *.schema.yaml文件获取所有方案
             List<Schema> installSchemaList = ReadAllSchemaYaml(_strRootFolderPath + "\\data", true,false);
@@ -707,10 +724,19 @@ namespace RimeControl
              select tbListSchemaList)
              .ToList()
              .ForEach(sScheme => { sScheme.isUsing = true; sScheme.isSelect = true; });
-            
+        }
 
+        /// <summary>
+        /// 方案信息载入完成时执行
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LoadSchemasCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //设置 DataGridSchema 的数据源为 _listSchemaList
             DataGridSchema.ItemsSource = _listSchemaList;
         }
+
 
         private List<Schema> ReadAllSchemaYaml(string dirPath, bool isSys,bool inRoaming)
         {
@@ -742,7 +768,6 @@ namespace RimeControl
                         catch (Exception e)
                         {
                             Console.WriteLine(e);
-                            string t_schema_id = tempSchemaYaml.Read("schema.schema_id");
                         }
                         //Schema 名称
                         schema.name = Tools.RemoveFirstLastQuotationMarks(tempSchemaYaml.Read("schema.name"));
@@ -1540,97 +1565,111 @@ namespace RimeControl
         #region 方案Schema部分 事件
 
         /// <summary>
-        /// DataGridSchema 单元格结束编辑事件
+        /// 启用否 单击事件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DataGridSchema_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        private void ColCkbSelect_Click(object sender, RoutedEventArgs e)
         {
-            if (e.Column.SortMemberPath == "isSelect")
+            if (sender is CheckBox ckbSelect && DataGridSchema.SelectedItems.Count > 0 && DataGridSchema.SelectedItems[0] is Schema currentSchema)
             {
-                System.Windows.Controls.CheckBox ckbSelect = e.EditingElement as System.Windows.Controls.CheckBox;
-
-                if (e.Row.Item is Schema currentSchema)
+                if (ckbSelect.IsChecked != null && ckbSelect.IsChecked.Value)
                 {
-                    if (ckbSelect?.IsChecked != null && ckbSelect.IsChecked.Value)
+                    //--勾选，检查依赖的Schema是否勾选
+                    bool isAllSelect = true;
+                    string strNoSelectYlSchema = "";
+                    //获取所有currentSchema依赖或间接依赖的Schema
+                    List<Schema> ylSchemas = new List<Schema>();
+                    Tools.getAllSchemaYl(_listSchemaList, ylSchemas, currentSchema);
+                    //排除自身，有些情况下会出现自身
+                    if (ylSchemas.IndexOf(currentSchema) > -1)
                     {
-                        //--勾选，检查依赖的Schema是否勾选
-                        bool isAllSelect = true;
-                        string strNoSelectYlSchema = "";
-                        //获取所有currentSchema依赖或间接依赖的Schema
-                        List<Schema> ylSchemas = new List<Schema>();
-                        Tools.getAllSchemaYl(_listSchemaList, ylSchemas, currentSchema);
-                        //排除自身，有些情况下会出现自身
-                        if (ylSchemas.IndexOf(currentSchema) > -1)
+                        ylSchemas.Remove(currentSchema);
+                    }
+                    //遍历判断是否都勾选，取出没有勾选的
+                    foreach (Schema ylSchema in ylSchemas)
+                    {
+                        if (!ylSchema.isSelect)
                         {
-                            ylSchemas.Remove(currentSchema);
-                        }
-                        //遍历判断是否都勾选，取出没有勾选的
-                        foreach (Schema ylSchema in ylSchemas)
-                        {
-                            if (!ylSchema.isSelect)
-                            {
-                                isAllSelect = false;
-                                strNoSelectYlSchema += ylSchema.schema_id + " ";
-                            }
-                        }
-                        if (!isAllSelect)
-                        {
-                            string strMsg = "该Schema:[" + currentSchema.schema_id + "]依赖于或间接依赖于未启用的Schema:[" + strNoSelectYlSchema + "]" + ",将全部启用，是否继续启用?";
-                            if (MessageBox.Show(strMsg, "提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                            {
-                                foreach (Schema ylSchema in ylSchemas)
-                                {
-                                    ylSchema.isSelect = true;
-                                }
-                            }
-                            else
-                            {
-                                //禁止启用
-                                ckbSelect.IsChecked = false;
-                            }
+                            isAllSelect = false;
+                            strNoSelectYlSchema += ylSchema.schema_id + " ";
                         }
                     }
-                    else
+                    if (!isAllSelect)
                     {
-                        //--去掉勾选，检查依赖该Schema的Schema
-                        //获取所有依赖于或间接依赖于currentSchema的Schema
-                        List<Schema> bylSchemas = new List<Schema>();
-                        Tools.getAllSchemaByl(_listSchemaList, bylSchemas, currentSchema);
-                        //排除自身，有些情况下会出现自身
-                        if (bylSchemas.IndexOf(currentSchema) > -1)
+                        string strMsg = "该Schema:[" + currentSchema.schema_id + "]依赖于或间接依赖于未启用的Schema:[" + strNoSelectYlSchema + "]" + ",将全部启用，是否继续启用?";
+                        if (MessageBox.Show(strMsg, "提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                         {
-                            bylSchemas.Remove(currentSchema);
-                        }
-                        string strNoSelectBylSchema = "";
-                        bool isAllNotSelect = true;//标识所有依赖于或间接依赖于currentSchema的Schema都没有勾选
-                        //遍历
-                        foreach (Schema item in bylSchemas)
-                        {
-                            if (item.isSelect)
+                            foreach (Schema ylSchema in ylSchemas)
                             {
-                                isAllNotSelect = false;
-                                strNoSelectBylSchema += item.schema_id + " ";
+                                ylSchema.isSelect = true;
                             }
                         }
-                        if (!isAllNotSelect)
+                        else
                         {
-                            string strMsg = "已经启用的Schema:[" + strNoSelectBylSchema + "] 依赖于或间接依赖于该Schema：[" + currentSchema.schema_id + "]，将全部停用。是否继续停用？";
-                            if (MessageBox.Show(strMsg, "提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                            {
-                                foreach (Schema item in bylSchemas)
-                                {
-                                    item.isSelect = false;
-                                }
-                            }
-                            else
-                            {
-                                //禁止停用
-                                if (ckbSelect != null) ckbSelect.IsChecked = true;
-                            }
+                            //禁止启用
+                            ckbSelect.IsChecked = false;
                         }
                     }
                 }
+                else
+                {
+                    //--去掉勾选，检查依赖该Schema的Schema
+                    //获取所有依赖于或间接依赖于currentSchema的Schema
+                    List<Schema> bylSchemas = new List<Schema>();
+                    Tools.getAllSchemaByl(_listSchemaList, bylSchemas, currentSchema);
+                    //排除自身，有些情况下会出现自身
+                    if (bylSchemas.IndexOf(currentSchema) > -1)
+                    {
+                        bylSchemas.Remove(currentSchema);
+                    }
+                    string strNoSelectBylSchema = "";
+                    bool isAllNotSelect = true;//标识所有依赖于或间接依赖于currentSchema的Schema都没有勾选
+                                               //遍历
+                    foreach (Schema item in bylSchemas)
+                    {
+                        if (item.isSelect)
+                        {
+                            isAllNotSelect = false;
+                            strNoSelectBylSchema += item.schema_id + " ";
+                        }
+                    }
+                    if (!isAllNotSelect)
+                    {
+                        string strMsg = "已经启用的Schema:[" + strNoSelectBylSchema + "] 依赖于或间接依赖于该Schema：[" + currentSchema.schema_id + "]，将全部停用。是否继续停用？";
+                        if (MessageBox.Show(strMsg, "提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            foreach (Schema item in bylSchemas)
+                            {
+                                item.isSelect = false;
+                            }
+                        }
+                        else
+                        {
+                            //禁止停用
+                            ckbSelect.IsChecked = true;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// DataGridSchema 选择改变事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DataGridSchema_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (DataGridSchema.SelectedItems.Count > 0 && DataGridSchema.SelectedItems[0] is Schema selectedSchema)
+            {
+                string strText = "作者：" + Environment.NewLine;
+                strText += selectedSchema.author;
+                strText += Environment.NewLine + "描述：" + Environment.NewLine;
+                strText += selectedSchema.description;
+
+                TbSchemaInfo.Text = strText;
             }
         }
 
@@ -1639,7 +1678,7 @@ namespace RimeControl
         #region 备份部分 控件事件
 
         #region 备份部分的几个方法
-       
+
         /// <summary>
         /// 备份文件后台进程
         /// </summary>
@@ -1864,16 +1903,7 @@ namespace RimeControl
 
         }
 
-        private void DataGridSchema_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Schema selectedSchema = DataGridSchema.SelectedItems[0] as Schema;
+       
 
-            string strText = "作者："+ Environment.NewLine;
-            strText += selectedSchema.author ;
-            strText += Environment.NewLine + "描述："+ Environment.NewLine;
-            strText += selectedSchema.description;
-
-            TbSchameInfo.Text = strText;
-        }
     }
 }

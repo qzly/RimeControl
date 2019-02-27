@@ -1,19 +1,22 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:RimeControl.Styles">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Style TargetType="DataGrid">
         <!--网格线颜色-->
         <Setter Property="CanUserResizeColumns" Value="false"/>
-        <Setter Property="Background" Value="#E6DBBB"/>
-        <Setter Property="BorderBrush" Value="#d6c79b"/>
+        <!--<Setter Property="BorderBrush" Value="#d6c79b"/>-->
+        <Setter Property="Background" Value="#eeeeee"/>
+        <!--<Setter Property="BorderBrush" Value="#d6c79b"/>-->
+        <Setter Property="BorderBrush" Value="#ffffff"/>
         <Setter Property="HorizontalGridLinesBrush">
             <Setter.Value>
-                <SolidColorBrush Color="#d6c79b"/>
+                <!--<SolidColorBrush Color="#d6c79b"/>-->
+                <SolidColorBrush Color="#ffffff"/>
             </Setter.Value>
         </Setter>
         <Setter Property="VerticalGridLinesBrush">
             <Setter.Value>
-                <SolidColorBrush Color="#d6c79b"/>
+                <!--<SolidColorBrush Color="#d6c79b"/>-->
+                <SolidColorBrush Color="#ffffff"/>
             </Setter.Value>
         </Setter>
     </Style>

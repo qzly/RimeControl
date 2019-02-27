@@ -17,9 +17,25 @@ namespace RimeControl.Utils
                 Directory.CreateDirectory(strLogPath);
             }
 
-            string logPath = strLogPath + "\\" + "erroLog_" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff") +".log";
+            string logPath = strLogPath + "\\" + "ErrLog_" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff") +".log";
             //保存错误信息到磁盘
             File.WriteAllText(logPath, ex.ToString());
+            //在文件文件中管理器中定位文件
+            System.Diagnostics.Process.Start("Explorer", "/select," + logPath);
+        }
+
+
+        public static void DebugLog(string log)
+        {
+              string strLogPath = AppDomain.CurrentDomain.BaseDirectory+"Log";
+            if (!Directory.Exists(strLogPath))
+            {
+                Directory.CreateDirectory(strLogPath);
+            }
+
+            string logPath = strLogPath + "\\" + "DebugLog_" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff") +".log";
+            //保存错误信息到磁盘
+            File.WriteAllText(logPath, log);
             //在文件文件中管理器中定位文件
             System.Diagnostics.Process.Start("Explorer", "/select," + logPath);
         }
