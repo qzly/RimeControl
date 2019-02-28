@@ -479,6 +479,7 @@ namespace RimeControl
             #region switch_key>Control_L--default.custom.yaml
 
             string controlL = Tools.GetYamlValue(_yamlUserDefaultFile, "ascii_composer.switch_key.Control_L");
+            controlL = string.IsNullOrEmpty(controlL) ? "noop" : controlL;//避免不存在时程序无法运行
             CobCtrlL.SelectedValue = Convert.ToInt32(_dirCobCtrl[controlL]);
 
             #endregion
@@ -486,6 +487,7 @@ namespace RimeControl
             #region switch_key>Control_R--default.custom.yaml
 
             string controlR = Tools.GetYamlValue(_yamlUserDefaultFile, "ascii_composer.switch_key.Control_R");
+            controlR = string.IsNullOrEmpty(controlR) ? "noop" : controlR;//避免不存在时程序无法运行
             CobCtrlR.SelectedValue = Convert.ToInt32(_dirCobCtrl[controlR]);
 
             #endregion
@@ -493,6 +495,7 @@ namespace RimeControl
             #region switch_key>Shift_L--default.custom.yaml
 
             string shiftL = Tools.GetYamlValue(_yamlUserDefaultFile, "ascii_composer.switch_key.Shift_L");
+            shiftL = string.IsNullOrEmpty(shiftL) ? "noop" : shiftL;//避免不存在时程序无法运行
             CobShiftL.SelectedValue = Convert.ToInt32(_dirCobCtrl[shiftL]);
 
             #endregion
@@ -500,6 +503,7 @@ namespace RimeControl
             #region switch_key>Shift_R--default.custom.yaml
 
             string shiftR = Tools.GetYamlValue(_yamlUserDefaultFile, "ascii_composer.switch_key.Shift_R");
+            shiftR = string.IsNullOrEmpty(shiftR) ? "noop" : shiftR;//避免不存在时程序无法运行
             CobShiftR.SelectedValue = Convert.ToInt32(_dirCobCtrl[shiftR]);
 
             #endregion
@@ -507,6 +511,7 @@ namespace RimeControl
             #region switch_key>Caps_Lock--default.custom.yaml
 
             string capsLock = Tools.GetYamlValue(_yamlUserDefaultFile, "ascii_composer.switch_key.Caps_Lock");
+            capsLock = string.IsNullOrEmpty(capsLock) ? "noop" : capsLock;//避免不存在时程序无法运行
             CobCopsLock.SelectedValue = Convert.ToInt32(_dirCobCtrl[capsLock]);
 
             #endregion
@@ -514,6 +519,7 @@ namespace RimeControl
             #region switch_key>Eisu_toggle--default.custom.yaml
 
             string eisuToggle = Tools.GetYamlValue(_yamlUserDefaultFile, "ascii_composer.switch_key.Eisu_toggle");
+            eisuToggle = string.IsNullOrEmpty(eisuToggle) ? "noop" : eisuToggle;//避免不存在时程序无法运行
             CobEisutoggle.SelectedValue = Convert.ToInt32(_dirCobCtrl[eisuToggle]);
 
             #endregion
@@ -664,12 +670,19 @@ namespace RimeControl
             {
                 Console.WriteLine(e);
             }
+
+            //绑定ListBoxSchemes
+            ListBoxSchemes.ItemsSource = _listScheme;
+
+            if (usingScheme==null)
+            {
+                usingScheme = _listScheme.Count > 0 ? _listScheme[0] : null;
+            }
+
             //显示正在使用的SchemeId 
             if (usingScheme != null)
             {
                 TxtUsingScheme.Text = usingScheme.name;
-                //绑定ListBoxSchemes
-                ListBoxSchemes.ItemsSource = _listScheme;
                 //选中当前使用的皮肤
                 ListBoxSchemes.SelectedItem = usingScheme;
                 //将滚动条滚动到当前使用的皮肤
@@ -1022,7 +1035,7 @@ namespace RimeControl
                 //========保存 patch.style.color_scheme  使用的Scheme id
                 //List<Scheme> li = new List<Scheme>(_listScheme.ToList());//--调试用于查看结果
                 Scheme usingScheme = _listScheme.Single(s => s.isUsing);
-                Tools.SetYamlValue(_yamlUserWeaselCustomFile, "\"style/color_scheme\"", usingScheme.id.ToLower());
+                Tools.SetYamlValue(_yamlUserWeaselCustomFile, "\"style/color_scheme\"", usingScheme.id.Trim());
 
                 #endregion
 
@@ -1913,7 +1926,7 @@ namespace RimeControl
         private void BtnGetMoreSchema_Click(object sender, RoutedEventArgs e)
         {
             //rime-install.bat
-
+            MessageBox.Show("该功能还在实现中。。。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
