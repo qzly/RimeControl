@@ -102,7 +102,7 @@
                     <TextBox Name="TxtHotKey3" Grid.Row="10" Grid.Column="0" Height="24" Margin="82,13.547,20,0" TextWrapping="Wrap" PreviewKeyDown="TxtHotKey_KeyDown" IsReadOnly="True" VerticalContentAlignment="Center" VerticalAlignment="Top"/>
                     <TextBox Name="TxtHotKey4" Grid.Row="10" Grid.Column="1" Height="24" Margin="82,13.547,20,0" TextWrapping="Wrap" PreviewKeyDown="TxtHotKey_KeyDown" IsReadOnly="True" VerticalContentAlignment="Center" VerticalAlignment="Top"/>
 
-                    <Label Name="LblBasePath" Grid.Row="11" Grid.ColumnSpan="2" Grid.Column="0" Content="配置目录：" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    <TextBox Name="TbBasePath" Grid.Row="11" Grid.ColumnSpan="2" Grid.Column="0" Text="配置目录：" Margin="8,0,0,0" VerticalAlignment="Center" IsReadOnly="True" BorderThickness="0"/>
                 </Grid>
             </TabItem>
 
@@ -321,7 +321,7 @@
                         <!--<RowDefinition Height="25"></RowDefinition>-->
                     </Grid.RowDefinitions>
                     <DataGrid Name="DataGridSchema" Grid.Row="0" Margin="0" AutoGenerateColumns="False" RowDetailsVisibilityMode="VisibleWhenSelected" CanUserAddRows="False" 
-                             SelectionChanged="DataGridSchema_SelectionChanged" SelectionMode="Single">
+                             SelectionChanged="DataGridSchema_SelectionChanged" SelectionMode="Single"  AlternationCount="2">
                         <DataGrid.Columns>
                             <!--自定义CheckBox列 加 UpdateSourceTrigger=PropertyChanged 结束DataGridSchema的编辑状态，解决“选【启用】后一定要在非当前行点一下，这样最后勾选后的才能起效。”的问题 -->
                             <!--<DataGridCheckBoxColumn Binding="{Binding isSelect,UpdateSourceTrigger=PropertyChanged}" Width="60"  Header="启用否" x:Name="ColCkbSelect" />-->
@@ -339,26 +339,18 @@
                             <DataGridTextColumn Binding="{Binding version}" Header="版本" IsReadOnly="True"  Width="100"/>
                             <DataGridTextColumn Binding="{Binding dependencies}" Header="依赖" IsReadOnly="True" Width="140" />
                         </DataGrid.Columns>
-                        <!--<DataGrid.RowDetailsTemplate>
-                            <DataTemplate>
-                                -->
-                        <!--<Border Background="BlanchedAlmond" BorderThickness="0" Padding="80,0,0,0">-->
-                        <!--
-                                <Border Background="#DCEEF7" BorderThickness="0" Padding="80,0,0,0">
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock FontSize="12" Text="作者："  />
-                                        <TextBlock FontSize="12" Text="{Binding author}" Margin="20,0,0,0"/>
-                                        <TextBlock FontSize="12" Text="描述："  />
-                                        <TextBlock FontSize="12" Text="{Binding description}" Margin="20,0,0,0"  />
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </DataGrid.RowDetailsTemplate>-->
                     </DataGrid>
 
-                    <TextBox Name="TbSchemaInfo" Grid.Row="1" Text="" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"></TextBox>
+                    <!--显示皮肤的信息，方便复制-->
+                    <Grid Grid.Row="1" Margin="0" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"></ColumnDefinition>
+                            <ColumnDefinition Width="1*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
 
-                    <!--<TextBlock Grid.Row="2" Text="注意：勾选【启用】后一定要在非当前行点一下，这样最后勾选后的才能起效。" VerticalAlignment="Center" Foreground="Red"></TextBlock>-->
+                        <Button Name="BtnGetMoreSchema" Grid.Column="0" Margin="0,0,2,0" Width="Auto" Height="Auto" Content="获&#13;取&#13;更&#13;多&#13;输&#13;入&#13;方&#13;案" Click="BtnGetMoreSchema_Click"/>
+                        <TextBox Name="TbSchemaInfo" Grid.Column="1"  Text="" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"></TextBox>
+                    </Grid>
                 </Grid>
             </TabItem>
             <TabItem Header="    备份    " >
@@ -392,12 +384,12 @@
                 <Grid>
                     <Label Content="RimeControl" FontSize="60" Margin="10,10,0,0" Height="auto" VerticalAlignment="Top" Foreground="#0078D7"/>
                     <Label Content="信息" FontSize="26" Margin="10,100,0,0" Height="auto" VerticalAlignment="Top"/>
-                    <Label Content="版本：" FontSize="16" Margin="20,150,0,0" Height="auto" VerticalAlignment="Top" Padding="0" Name="LblVersionAbout"/>
-                    <Label Content="作者：qzly " FontSize="16" Margin="20,180,0,0" Height="auto" VerticalAlignment="Top" Padding="0"/>
+                    <TextBox Text="版本：" BorderThickness="0" IsReadOnly="True"  FontSize="16" Margin="20,150,0,0" Height="auto" VerticalAlignment="Top" Padding="0" Name="TbVersionAbout"/>
+                    <TextBox Text="作者：qzly " BorderThickness="0" IsReadOnly="True"  FontSize="16" Margin="20,180,0,0" Height="auto" VerticalAlignment="Top" Padding="0"/>
                     <Button Content="GitHub" FontSize="16" Margin="100,180,529,0" VerticalAlignment="Top" Padding="0" Name="BtnGitHub" BorderThickness="0" Foreground="#0078D7" FontWeight="Bold" Cursor="Hand" Click="BtnGitHub_Click"/>
-                    <Label Content="邮箱:  1396715343@qq.com " FontSize="16" Margin="20,210,0,0" Height="auto" VerticalAlignment="Top" Padding="0"/>
+                    <TextBox Text="邮箱:  1396715343@qq.com " BorderThickness="0" IsReadOnly="True"  FontSize="16" Margin="20,210,0,0" Height="auto" VerticalAlignment="Top" Padding="0"/>
                     <Label  FontSize="16" Margin="20,240,0,0"  VerticalAlignment="Top" Padding="0">
-                        <TextBlock Margin="0" TextWrapping="Wrap" Text="说明：这个工具最开始于2016初，是我自学C#的练习项目；之后我就忙着毕业、实习、工作就一直没时间管,非常抱歉。2019年春节重新维护了一下。如果遇到问题或者有什么建议，可以在GitHub的issues反馈或者发邮件到邮箱，我尽量改善，感谢！"  />
+                        <TextBox Margin="0" TextWrapping="Wrap" BorderThickness="0" IsReadOnly="True" Text="说明：这个工具最开始于2016初，是我自学C#的练习项目；之后我就忙着毕业、实习、工作就一直没时间管,非常抱歉。2019年春节重新维护了一下。如果遇到问题或者有什么建议，可以在GitHub的issues反馈或者发邮件到邮箱，我尽量改善，感谢！"  />
                     </Label>
                 </Grid>
             </TabItem>

@@ -150,7 +150,7 @@ namespace RimeControl
                             {
                                 _strUserFolderPath = myFolderBrowserDialog.SelectedPath;
                             }
-                            bolTrues = File.Exists(_strUserFolderPath + "\\default.yaml");
+                            bolTrues = File.Exists(_strUserFolderPath + "\\build\\default.yaml");
                         }
                     }
                     else
@@ -242,7 +242,7 @@ namespace RimeControl
 
             //显示路径信息
             string strBasePathInfo = "安装目录:" + _strRootFolderPath + "    配置目录;" + _strUserFolderPath;
-            LblBasePath.Content = strBasePathInfo;
+            TbBasePath.Text = strBasePathInfo;
 
 
             //拼接路径
@@ -857,7 +857,6 @@ namespace RimeControl
 
         #endregion
 
-
         #region 全局部分 控件事件-载入、保存、重新载入、倒计时
         /// <summary>
         /// 窗体载入事件
@@ -877,7 +876,7 @@ namespace RimeControl
 
             //加载版本信息
             string version = Properties.Resources.ResourceManager.GetString("app_version");
-            LblVersionAbout.Content = "版本：V" + version;
+            TbVersionAbout.Text = "版本：V" + version;
             LblVersion.Content = "RimeControl V" + version;
         }
 
@@ -1664,7 +1663,10 @@ namespace RimeControl
         {
             if (DataGridSchema.SelectedItems.Count > 0 && DataGridSchema.SelectedItems[0] is Schema selectedSchema)
             {
-                string strText = "作者：" + Environment.NewLine;
+                string strText = string.Empty;
+                strText += "schema_id： " + selectedSchema.schema_id+Environment.NewLine;
+                strText += "名称：  " + selectedSchema.name + Environment.NewLine;
+                strText += "作者：" + Environment.NewLine;
                 strText += selectedSchema.author;
                 strText += Environment.NewLine + "描述：" + Environment.NewLine;
                 strText += selectedSchema.description;
@@ -1903,7 +1905,15 @@ namespace RimeControl
 
         }
 
-       
+        /// <summary>
+        /// 获取更多输入方案
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnGetMoreSchema_Click(object sender, RoutedEventArgs e)
+        {
+            //rime-install.bat
 
+        }
     }
 }

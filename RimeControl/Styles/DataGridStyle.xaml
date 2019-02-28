@@ -3,52 +3,41 @@
     <Style TargetType="DataGrid">
         <!--网格线颜色-->
         <Setter Property="CanUserResizeColumns" Value="false"/>
-        <!--<Setter Property="BorderBrush" Value="#d6c79b"/>-->
-        <Setter Property="Background" Value="#eeeeee"/>
-        <!--<Setter Property="BorderBrush" Value="#d6c79b"/>-->
-        <Setter Property="BorderBrush" Value="#ffffff"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="White"/>
         <Setter Property="HorizontalGridLinesBrush">
             <Setter.Value>
-                <!--<SolidColorBrush Color="#d6c79b"/>-->
-                <SolidColorBrush Color="#ffffff"/>
+                <SolidColorBrush Color="#E6E6E6"/>
             </Setter.Value>
         </Setter>
         <Setter Property="VerticalGridLinesBrush">
             <Setter.Value>
-                <!--<SolidColorBrush Color="#d6c79b"/>-->
-                <SolidColorBrush Color="#ffffff"/>
+                <SolidColorBrush Color="#E6E6E6"/>
             </Setter.Value>
         </Setter>
     </Style>
     <!--标题栏样式-->
-    <!--<Style  TargetType="DataGridColumnHeader" >
-        <Setter Property="Width" Value="50"/>
-        <Setter Property="Height" Value="30"/>
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="Background" Value="White" />
-        <Setter  Property="FontWeight"  Value="Bold"/>
-    </Style>-->
     <Style TargetType="DataGridColumnHeader">
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="MinWidth" Value="0"/>
         <Setter Property="MinHeight" Value="28"/>
-        <Setter Property="Foreground" Value="#323433"/>
+        <Setter Property="Background" Value="Red" />
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="DataGridColumnHeader">
                     <Border x:Name="BackgroundBorder" BorderThickness="0,1,0,1" 
-                             BorderBrush="#e6dbba" 
+                             BorderBrush="#E6E6E6" 
                               Width="Auto">
-                        <Grid >
+                        <Grid Background="#F2F2F2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <ContentPresenter  Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <Path x:Name="SortArrow" Visibility="Collapsed" Data="M0,0 L1,0 0.5,1 z" Stretch="Fill"  Grid.Column="2" Width="8" Height="6" Fill="White" Margin="0,0,50,0" 
                             VerticalAlignment="Center" RenderTransformOrigin="1,1"/>
-                            <Rectangle Width="1" Fill="#d6c79b" HorizontalAlignment="Right" Grid.ColumnSpan="1"/>
+                            <Rectangle Width="1" Fill="#E6E6E6" HorizontalAlignment="Right" Grid.ColumnSpan="1"/>
                             <!--<TextBlock  Background="Red">
                             <ContentPresenter></ContentPresenter></TextBlock>-->
                         </Grid>
@@ -61,12 +50,12 @@
     <!--行样式触发-->
     <!--背景色改变必须先设置cellStyle 因为cellStyle会覆盖rowStyle样式-->
     <Style  TargetType="DataGridRow">
-        <Setter Property="Background" Value="#F2F2F2"/>
+        <Setter Property="Background" Value="#FFFFFF"/>
         <Setter Property="Foreground" Value="Black"/>
         <Style.Triggers>
             <!--隔行换色-->
             <Trigger Property="AlternationIndex" Value="0">
-                <Setter Property="Background" Value="#e7e7e7"/>
+                <Setter Property="Background" Value="#FFFFFF"/>
             </Trigger>
             <Trigger Property="AlternationIndex" Value="1">
                 <Setter Property="Background" Value="#f2f2f2"/>
