@@ -5,8 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -696,8 +701,8 @@ namespace RimeControl
         /// </summary>
         private void LoadSchemas(object sender, DoWorkEventArgs e)
         {
-            //===读取 安装目录\data\ 下所有  *.schema.yaml文件获取所有方案
-            List<Schema> installSchemaList = ReadAllSchemaYaml(_strRootFolderPath + "\\data", true,false);
+           //===读取 安装目录\data\ 下所有  *.schema.yaml文件获取所有方案
+           List <Schema> installSchemaList = ReadAllSchemaYaml(_strRootFolderPath + "\\data", true,false);
 
             //===读取用户配置目录下 下所有  *.schema.yaml文件
             List<Schema> userSchemaListT = ReadAllSchemaYaml(_strUserFolderPath + "\\build", false,false);
@@ -891,6 +896,67 @@ namespace RimeControl
             string version = Properties.Resources.ResourceManager.GetString("app_version");
             TbVersionAbout.Text = "版本：V" + version;
             LblVersion.Content = "RimeControl V" + version;
+
+            //检查版本号，是否有更新
+            BackgroundWorker bwCheckReleases = new BackgroundWorker();
+            bwCheckReleases.DoWork += CheckReleases;//执行的任务
+            bwCheckReleases.RunWorkerCompleted += CheckReleasesCompleted;//任务执行完成后的回调
+            bwCheckReleases.RunWorkerAsync();//开始执行后台任务
+        }
+
+        private void CheckReleasesCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            
+        }
+
+        private bool _havaNewReleases = false;
+        private void CheckReleases(object sender, DoWorkEventArgs e)
+        {
+            var url = "https://api.github.com/repos/qzly/RimeControl/releases/latest";
+
+            HttpWebRequest request;
+            if (url.StartsWith("https", StringComparison.OrdinalIgnoreCase))
+            {
+                request = WebRequest.Create(url) as HttpWebRequest;
+                ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
+                request.ProtocolVersion = HttpVersion.Version11;
+                // 这里设置了协议类型。
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;// SecurityProtocolType.Tls1.2; 
+                request.KeepAlive = false;
+                ServicePointManager.CheckCertificateRevocationList = true;
+                ServicePointManager.DefaultConnectionLimit = 100;
+                ServicePointManager.Expect100Continue = false;
+            }
+            else
+            {
+                request = (HttpWebRequest)WebRequest.Create(url);
+            }
+
+            request.Method = "GET";    //使用get方式发送数据
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.Referer = null;
+            request.AllowAutoRedirect = true;
+            request.UserAgent = "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.2; .NET CLR 1.1.4322; .NET CLR 2.0.50727)";
+            request.Accept = "*/*";
+
+            //byte[] data = Encoding.UTF8.GetBytes(postData);
+            //Stream newStream = request.GetRequestStream();
+            //newStream.Write(data, 0, data.Length);
+            //newStream.Close();
+
+            //获取网页响应结果
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream stream = response.GetResponseStream();
+            //client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+            string result = string.Empty;
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                result = sr.ReadToEnd();
+            }
+        }
+        private static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+        {
+            return true; //总是接受          }
         }
 
         /// <summary>
@@ -1074,7 +1140,8 @@ namespace RimeControl
                     {
                         string schemaFileFromPath = _userRoamingFolderRime + "\\" + saveSchema.schema_id + ".schema.yaml";
                         string schemaFileToPath=_strUserFolderPath + "\\" + saveSchema.schema_id + ".schema.yaml";
-                        if (File.Exists(schemaFileFromPath))
+                        //判断用户目录是否就是  Roaming\Rime目录；如果不是就不再复制文件，否则复制文件
+                        if (_userRoamingFolderRime!= _strUserFolderPath && File.Exists(schemaFileFromPath))
                         {
                             try
                             {
@@ -1688,6 +1755,64 @@ namespace RimeControl
             }
         }
 
+
+        /// <summary>
+        /// 获取更多输入方案
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnGetMoreSchema_Click(object sender, RoutedEventArgs e)
+        {
+            //调用 rime-install.bat
+            //MessageBox.Show("该功能还在实现中。。。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            string rimeInstallBat = _strRootFolderPath + "\\rime-install.bat";
+            if (File.Exists(rimeInstallBat))
+            {
+                try
+                {
+                    //启动外部程序
+                    Process procRimeInstall = Process.Start(rimeInstallBat);
+                    if (procRimeInstall != null)
+                    {
+                        //监视进程退出
+                        procRimeInstall.EnableRaisingEvents = true;
+                        //指定退出事件方法
+                        procRimeInstall.Exited += ProcRimeInstall_Exited;
+                    }
+                }
+                catch (ArgumentException ex)
+                {
+                    MessageBox.Show("rime-install.bat 调用失败，该功能无法使用!", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            else
+            {
+                MessageBox.Show("rime-install.bat 文件没有找到，该功能无法使用!", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        /// <summary>
+        /// rime-install.bat 执行完成后回调
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ProcRimeInstall_Exited(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("将重新载入方案列表，您未保存的修改可能丢失，是否继续？\r\n 【否】将在下次重新载入配置时刷新方案列表", "提示", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                //交由主线程执行
+                Dispatcher.Invoke(() =>
+                {
+                    //载入方案信息
+                    //LoadSchemas();
+                    BackgroundWorker bwLoadSchemas = new BackgroundWorker();
+                    bwLoadSchemas.DoWork += LoadSchemas;//执行的任务
+                    bwLoadSchemas.RunWorkerCompleted += LoadSchemasCompleted;//任务执行完成后的回调
+                    bwLoadSchemas.RunWorkerAsync();//开始执行后台任务
+                });
+            }
+        }
+
         #endregion
 
         #region 备份部分 控件事件
@@ -1918,15 +2043,6 @@ namespace RimeControl
 
         }
 
-        /// <summary>
-        /// 获取更多输入方案
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnGetMoreSchema_Click(object sender, RoutedEventArgs e)
-        {
-            //rime-install.bat
-            MessageBox.Show("该功能还在实现中。。。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
+        
     }
 }
