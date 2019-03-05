@@ -42,7 +42,7 @@ namespace RimeControl
         private string _strRootFolderPath = "";      //小狼毫输入法root目录路径
         //public readonly string StrProjectRootPath = AppDomain.CurrentDomain.BaseDirectory;      //程序运行目录
         //获取用户应用程序目录中的Rime目录  C:\Users\用户名\AppData\Roaming\Rime
-        private readonly string _userRoamingFolderRime = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+ "\\Rime";
+        private readonly string _userRoamingFolderRime = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Rime";
 
         private string _strUserDefaultCustomPath = "\\default.custom.yaml";     //default.custom.yaml的文件路径 
         private string _strUserWeaselCustomPathPath = "\\weasel.custom.yaml";     //weasel.custom.yaml的文件  路径
@@ -84,6 +84,9 @@ namespace RimeControl
 
         private bool _isBackup = true;//表示加载页面是备份还是还原
         private int _backupRestoreResult;//备份or还原方法的结果
+
+        //GitHub上的最新版本号
+        private string _newVerison;
         #endregion
 
 
@@ -131,7 +134,7 @@ namespace RimeControl
             if (string.IsNullOrEmpty(_strUserFolderPath))
             {
                 //获取系统用户目录
-                _strUserFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)  + "\\Rime";
+                _strUserFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Rime";
                 bolTrues = File.Exists(_strUserFolderPath + "\\build\\default.yaml");
                 if (!bolTrues)
                 {
@@ -384,7 +387,7 @@ namespace RimeControl
         #endregion
 
         #region 读取数据并绑定
-        
+
 
         /// <summary>
         /// 设置数据读取绑定
@@ -679,7 +682,7 @@ namespace RimeControl
             //绑定ListBoxSchemes
             ListBoxSchemes.ItemsSource = _listScheme;
 
-            if (usingScheme==null)
+            if (usingScheme == null)
             {
                 usingScheme = _listScheme.Count > 0 ? _listScheme[0] : null;
             }
@@ -701,12 +704,12 @@ namespace RimeControl
         /// </summary>
         private void LoadSchemas(object sender, DoWorkEventArgs e)
         {
-           //===读取 安装目录\data\ 下所有  *.schema.yaml文件获取所有方案
-           List <Schema> installSchemaList = ReadAllSchemaYaml(_strRootFolderPath + "\\data", true,false);
+            //===读取 安装目录\data\ 下所有  *.schema.yaml文件获取所有方案
+            List<Schema> installSchemaList = ReadAllSchemaYaml(_strRootFolderPath + "\\data", true, false);
 
             //===读取用户配置目录下 下所有  *.schema.yaml文件
-            List<Schema> userSchemaListT = ReadAllSchemaYaml(_strUserFolderPath + "\\build", false,false);
-            
+            List<Schema> userSchemaListT = ReadAllSchemaYaml(_strUserFolderPath + "\\build", false, false);
+
             //Linq not in查询出 在userSchemaListT列表中而不在installSchemaList列表中的 Schema，就是用户自行添加的Schema
             List<Schema> userSchemaList = (from tbUserSchemaListT in userSchemaListT
                                            where !(from tbInstallSchemaList in installSchemaList select tbInstallSchemaList.schema_id).Contains(tbUserSchemaListT.schema_id)
@@ -724,7 +727,7 @@ namespace RimeControl
                 //Linq not in查询出 在roamingSchemaList列表中而不在installSchemaList列表中的 Schema，就是用户自行添加的Schema
                 List<Schema> rsT = (from tbRst in roamingSchemaList
                                     where !(from tbInstallSchemaList in installSchemaList select tbInstallSchemaList.schema_id).Contains(tbRst.schema_id)
-                    select tbRst).ToList();
+                                    select tbRst).ToList();
                 foreach (Schema item in rsT)
                 {
                     //item.isSys = false;//非Rime自带Schema
@@ -756,7 +759,7 @@ namespace RimeControl
         }
 
 
-        private List<Schema> ReadAllSchemaYaml(string dirPath, bool isSys,bool inRoaming)
+        private List<Schema> ReadAllSchemaYaml(string dirPath, bool isSys, bool inRoaming)
         {
             List<Schema> listR = new List<Schema>();
             if (Directory.Exists(dirPath))
@@ -906,58 +909,28 @@ namespace RimeControl
 
         private void CheckReleasesCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            
+            if (!string.IsNullOrEmpty(_newVerison))
+            {
+                //判断新版本号大于旧版本，显示新版本号
+                if (_newVerison.CompareTo(Properties.Resources.ResourceManager.GetString("app_version")) > 0)
+                {
+                    BtnNewVersion.Content = "有新版本：V" + _newVerison;
+                    BtnNewVersion.Visibility = Visibility.Visible;
+                }
+            }
         }
-
-        private bool _havaNewReleases = false;
         private void CheckReleases(object sender, DoWorkEventArgs e)
         {
-            var url = "https://api.github.com/repos/qzly/RimeControl/releases/latest";
-
-            HttpWebRequest request;
-            if (url.StartsWith("https", StringComparison.OrdinalIgnoreCase))
+            string url = "https://api.github.com/repos/qzly/RimeControl/releases/latest";
+            string result = HttpUtils.GetStringData(url, null);
+            Regex regexTagName = new Regex("(?<=tag_name\" *: *\")\\w+?(?=\",)");
+            Match match = regexTagName.Match(result);
+            if (match.Success)
             {
-                request = WebRequest.Create(url) as HttpWebRequest;
-                ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
-                request.ProtocolVersion = HttpVersion.Version11;
-                // 这里设置了协议类型。
-                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;// SecurityProtocolType.Tls1.2; 
-                request.KeepAlive = false;
-                ServicePointManager.CheckCertificateRevocationList = true;
-                ServicePointManager.DefaultConnectionLimit = 100;
-                ServicePointManager.Expect100Continue = false;
-            }
-            else
-            {
-                request = (HttpWebRequest)WebRequest.Create(url);
-            }
-
-            request.Method = "GET";    //使用get方式发送数据
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.Referer = null;
-            request.AllowAutoRedirect = true;
-            request.UserAgent = "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.2; .NET CLR 1.1.4322; .NET CLR 2.0.50727)";
-            request.Accept = "*/*";
-
-            //byte[] data = Encoding.UTF8.GetBytes(postData);
-            //Stream newStream = request.GetRequestStream();
-            //newStream.Write(data, 0, data.Length);
-            //newStream.Close();
-
-            //获取网页响应结果
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            Stream stream = response.GetResponseStream();
-            //client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-            string result = string.Empty;
-            using (StreamReader sr = new StreamReader(stream))
-            {
-                result = sr.ReadToEnd();
+                _newVerison = match.Value;
             }
         }
-        private static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
-        {
-            return true; //总是接受          }
-        }
+
 
         /// <summary>
         /// 保存按钮
@@ -1028,7 +1001,7 @@ namespace RimeControl
 
                 //先移除 default.custom.yaml 中 patch."switcher/hotkeys"节点的所有子节点
                 YAML.Node switcherHotkeys = _yamlUserDefaultCustomFile.FindNodeByKey("patch.\"switcher/hotkeys\"");
-                if (switcherHotkeys!=null)
+                if (switcherHotkeys != null)
                 {
                     List<YAML.Node> removeNodes = _yamlUserDefaultCustomFile.nodeList.Where(rn => rn.parent == switcherHotkeys).ToList();
                     foreach (YAML.Node removeNode in removeNodes)
@@ -1122,7 +1095,7 @@ namespace RimeControl
                  */
                 //移除default.custom.yaml 中 patch.schema_list 的所有子节点
                 YAML.Node schemaListNode = _yamlUserDefaultCustomFile.FindNodeByKey("patch.schema_list");
-                if (schemaListNode!=null)
+                if (schemaListNode != null)
                 {
                     List<YAML.Node> removeSchemaNodes = _yamlUserDefaultCustomFile.nodeList.Where(rn => rn.parent == schemaListNode).ToList();
                     foreach (YAML.Node removeNode in removeSchemaNodes)
@@ -1139,13 +1112,13 @@ namespace RimeControl
                     if (saveSchema.inRoaming)
                     {
                         string schemaFileFromPath = _userRoamingFolderRime + "\\" + saveSchema.schema_id + ".schema.yaml";
-                        string schemaFileToPath=_strUserFolderPath + "\\" + saveSchema.schema_id + ".schema.yaml";
+                        string schemaFileToPath = _strUserFolderPath + "\\" + saveSchema.schema_id + ".schema.yaml";
                         //判断用户目录是否就是  Roaming\Rime目录；如果不是就不再复制文件，否则复制文件
-                        if (_userRoamingFolderRime!= _strUserFolderPath && File.Exists(schemaFileFromPath))
+                        if (_userRoamingFolderRime != _strUserFolderPath && File.Exists(schemaFileFromPath))
                         {
                             try
                             {
-                                File.Copy(schemaFileFromPath, schemaFileToPath,false);
+                                File.Copy(schemaFileFromPath, schemaFileToPath, false);
                             }
                             catch (Exception exception)
                             {
@@ -1744,7 +1717,7 @@ namespace RimeControl
             if (DataGridSchema.SelectedItems.Count > 0 && DataGridSchema.SelectedItems[0] is Schema selectedSchema)
             {
                 string strText = string.Empty;
-                strText += "schema_id： " + selectedSchema.schema_id+Environment.NewLine;
+                strText += "schema_id： " + selectedSchema.schema_id + Environment.NewLine;
                 strText += "名称：  " + selectedSchema.name + Environment.NewLine;
                 strText += "作者：" + Environment.NewLine;
                 strText += selectedSchema.author;
@@ -1782,6 +1755,7 @@ namespace RimeControl
                 }
                 catch (ArgumentException ex)
                 {
+                    Console.Write(ex);
                     MessageBox.Show("rime-install.bat 调用失败，该功能无法使用!", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
@@ -1951,7 +1925,7 @@ namespace RimeControl
                 {
                     if (MessageBox.Show("确定要删除该备份吗？", "提示", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                       string strFileName = _strBackupsFolder + items.ItemFileName;
+                        string strFileName = _strBackupsFolder + items.ItemFileName;
                         try
                         {
                             File.Delete(strFileName);
@@ -1969,7 +1943,7 @@ namespace RimeControl
             }
             MessageBox.Show("请选择需要删除的一行", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        
+
         /// <summary>
         /// 重新载入备份信息
         /// </summary>
@@ -1990,7 +1964,7 @@ namespace RimeControl
             if (MessageBox.Show("还原默认设置将删除您的用户配置，让小狼毫重新部署生成默认的配置。删除前会自动备份您的配置，是否继续？", "提示", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 //备份数据
-                BtnBack_Click(null,null);
+                BtnBack_Click(null, null);
                 //删除配置目录
                 try
                 {
@@ -2043,6 +2017,14 @@ namespace RimeControl
 
         }
 
-        
+        /// <summary>
+        /// 打开最新版本下载目录
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnNewVersion_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/qzly/RimeControl/releases/latest");
+        }
     }
 }

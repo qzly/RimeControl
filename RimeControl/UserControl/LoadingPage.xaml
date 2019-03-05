@@ -11,9 +11,7 @@
             HorizontalAlignment="Center"  
             VerticalAlignment="Center">
         <Grid x:Name="LayoutRoot"   
-                Background="Transparent"  
-                ToolTip="{Binding LoadingText,ElementName=Root}"  
-                
+                Background="Transparent"
                 HorizontalAlignment="Center"  
                 VerticalAlignment="Center">
             <TextBlock Text="{Binding LoadingText,ElementName=Root}"  

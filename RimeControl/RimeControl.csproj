@@ -101,6 +101,7 @@
     </Compile>
     <Compile Include="Utils\BackUserSetting.cs" />
     <Compile Include="Utils\ExceptionLog.cs" />
+    <Compile Include="Utils\HttpUtils.cs" />
     <Compile Include="Utils\PackagingUtil.cs" />
     <Compile Include="Utils\Tools.cs" />
     <Compile Include="Utils\Yaml.cs" />
@@ -125,6 +126,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Styles\ButtonStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ComboBoxStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
