@@ -15,7 +15,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <!-- ComboBox 样式 -->
-                <!--<ResourceDictionary Source="/Styles/ComboBoxStyle.xaml"/>-->
+                <ResourceDictionary Source="/Styles/ComboBoxStyle.xaml" />
                 <!-- TabItem 样式 -->
                 <ResourceDictionary Source="/Styles/TabItemStyle.xaml" />
                 <!-- Button 样式 -->
@@ -26,9 +26,6 @@
             <!-- Converter -->
             <local:ListBoxSchemeSysConverter x:Key="CvtListBoxSchemeSys"/>
         </ResourceDictionary>
-
-
-        
     </Window.Resources>
 
     <Grid Name="MainGrid">
@@ -66,8 +63,8 @@
 
                     <Label Grid.Row="1" Grid.Column="0" Content="字号:"   HorizontalAlignment="Left" Margin="11,3,0,0" VerticalAlignment="Center" Height="25" />
                     <Label Grid.Row="2" Grid.Column="0" Content="候选数:" HorizontalAlignment="Left" Margin="11,3,0,0" VerticalAlignment="Center" Height="25" />
-                    <ComboBox Name="CobFontSize" Grid.Row="1" Grid.Column="0" Margin="82,0,20,0" VerticalAlignment="Center" />
-                    <ComboBox Name="CobPageSize" Grid.Row="2" Grid.Column="0" Margin="82,0,20,0" VerticalAlignment="Center" />
+                    <ComboBox Name="CobFontSize" Grid.Row="1" Grid.Column="0" Margin="82,0,20,0" VerticalAlignment="Center" Height="25"/>
+                    <ComboBox Name="CobPageSize" Grid.Row="2" Grid.Column="0" Margin="82,0,20,0" VerticalAlignment="Center" Height="25"/>
 
                     <!--候选项横/竖排显示-->
                     <Label       Grid.Row="3" Grid.Column="0" Content="候选项" Margin="11,3,0,0" HorizontalAlignment="Left" Height=" 25" Width="48.89" VerticalAlignment="Center"></Label>
@@ -87,12 +84,12 @@
                     <Label Content="右 Shift"     Grid.Row="6" Grid.Column="1" Margin="11,11.796,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
                     <Label Content="CopsLock"     Grid.Row="7" Grid.Column="0" Margin="11,11.796,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
                     <Label Content="EisuToggle：" Grid.Row="7" Grid.Column="1" Margin="11,11.796,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
-                    <ComboBox Name="CobCtrlL"      Grid.Row="5" Grid.Column="0" Margin="82,14.296,20,0" VerticalAlignment="Top"/>
-                    <ComboBox Name="CobCtrlR"      Grid.Row="5" Grid.Column="1" Margin="82,14.296,20,0" VerticalAlignment="Top"/>
-                    <ComboBox Name="CobShiftL"     Grid.Row="6" Grid.Column="0" Margin="82,14.296,20,0" VerticalAlignment="Top" />
-                    <ComboBox Name="CobShiftR"     Grid.Row="6" Grid.Column="1" Margin="82,14.296,20,0" VerticalAlignment="Top" />
-                    <ComboBox Name="CobCopsLock"   Grid.Row="7" Grid.Column="0" Margin="82,14.297,20,0" VerticalAlignment="Top" />
-                    <ComboBox Name="CobEisutoggle" Grid.Row="7" Grid.Column="1" Margin="82,14.297,20,0" VerticalAlignment="Top" />
+                    <ComboBox Name="CobCtrlL"      Grid.Row="5" Grid.Column="0" Margin="82,14.296,20,0" VerticalAlignment="Top" Height="25"/>
+                    <ComboBox Name="CobCtrlR"      Grid.Row="5" Grid.Column="1" Margin="82,14.296,20,0" VerticalAlignment="Top" Height="25"/>
+                    <ComboBox Name="CobShiftL"     Grid.Row="6" Grid.Column="0" Margin="82,14.296,20,0" VerticalAlignment="Top" Height="25"/>
+                    <ComboBox Name="CobShiftR"     Grid.Row="6" Grid.Column="1" Margin="82,14.296,20,0" VerticalAlignment="Top" Height="25"/>
+                    <ComboBox Name="CobCopsLock"   Grid.Row="7" Grid.Column="0" Margin="82,14.297,20,0" VerticalAlignment="Top" Height="25"/>
+                    <ComboBox Name="CobEisutoggle" Grid.Row="7" Grid.Column="1" Margin="82,14.297,20,0" VerticalAlignment="Top" Height="25"/>
 
                     <Label               Grid.Row="8" Grid.Column="0" Content="方案选单快捷键:"    HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,10,0,0"  />
                     <Label Name="Label1" Grid.Row="8" Grid.Column="0" Content="方案选单显示名称：" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="176,10,0,0" />

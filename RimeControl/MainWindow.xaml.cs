@@ -8,10 +8,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -912,7 +908,7 @@ namespace RimeControl
             if (!string.IsNullOrEmpty(_newVerison))
             {
                 //判断新版本号大于旧版本，显示新版本号
-                if (_newVerison.CompareTo(Properties.Resources.ResourceManager.GetString("app_version")) > 0)
+                if (String.Compare(_newVerison, Properties.Resources.ResourceManager.GetString("app_version"), StringComparison.Ordinal) > 0)
                 {
                     BtnNewVersion.Content = "有新版本：V" + _newVerison;
                     BtnNewVersion.Visibility = Visibility.Visible;
@@ -1987,7 +1983,7 @@ namespace RimeControl
 
         private void BtnGitHub_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/qzly/RimeControl");
+            Process.Start("https://github.com/qzly/RimeControl");
         }
 
         #endregion
@@ -1999,7 +1995,7 @@ namespace RimeControl
         private void DeployAndWait()
         {
             //小狼毫重新部署
-            System.Diagnostics.Process.Start(_strRootFolderPath + "\\WeaselDeployer.exe", "/deploy");
+            Process.Start(_strRootFolderPath + "\\WeaselDeployer.exe", "/deploy");
 
             //保存后等待小狼毫重新部署
             LblTime.Content = 5;
@@ -2024,7 +2020,7 @@ namespace RimeControl
         /// <param name="e"></param>
         private void BtnNewVersion_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/qzly/RimeControl/releases/latest");
+            Process.Start("https://github.com/qzly/RimeControl/releases/latest");
         }
     }
 }

@@ -39,6 +39,7 @@
     <ApplicationIcon>Resources\rime.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -105,6 +106,10 @@
     <Compile Include="Utils\PackagingUtil.cs" />
     <Compile Include="Utils\Tools.cs" />
     <Compile Include="Utils\Yaml.cs" />
+    <Page Include="Styles\ComboBoxStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="FontDialogSample\FontChooser.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -126,10 +131,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Styles\ButtonStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\ComboBoxStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
