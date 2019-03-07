@@ -397,7 +397,7 @@
     <comment>上键</comment>
   </data>
   <data name="app_version" xml:space="preserve">
-    <value>20190227</value>
+    <value>20190307</value>
     <comment>版本</comment>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />

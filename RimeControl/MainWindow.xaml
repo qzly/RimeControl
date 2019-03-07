@@ -401,16 +401,12 @@
         <Button Content="有新版本："  Margin="180,10,0,8" Height="20" Padding="0" Name="BtnNewVersion" Grid.Row="1" HorizontalAlignment="Left" Width="auto" VerticalContentAlignment="Bottom" Foreground="Blue" BorderThickness="0" Click="BtnNewVersion_Click" Visibility="Collapsed"/>
         <Button Name="BtnSave" Content="保存" Margin="0,0,26,6" Grid.Row="1" VerticalAlignment="Bottom" Height="22" HorizontalAlignment="Right" Width="75" Click="BtnSave_Click" />
         <Button Name="BtnReLoad" Content="重新载入" Margin="0,0,126,6" Grid.Row="1" VerticalAlignment="Bottom" Height="22" HorizontalAlignment="Right" Width="75" Click="BtnReLoad_Click"  />
-        <!--倒计时遮盖层-->
-        <Grid Name="GrdDeploying" ZIndex="-1"  Grid.Row="0" Grid.RowSpan="2" Background="#96FFFFFF">
-            <Label Content="正在等待小狼毫重新部署" VerticalAlignment="Center" HorizontalAlignment="Center" Height="52"  FontSize="32"  Foreground="#0078D7" />
-            <Label Content="5" Margin="360,126,359,321" Name="LblTime" FontSize="100"  FontFamily="Microsoft YaHei" Foreground="#0078D7" />
-        </Grid>
-        <!--备份还原遮盖层-->
+
+        <!--遮盖层-->
         <userControl:LoadingPage Grid.Row="0" Grid.RowSpan="2" LoadCirclesMargin="1" LoadingText="备份中..."
                                  LoadingTextFontSize="10" LoadingTextForeground="#0078D7"
                                  CirclesBrush="#0078D7"
-                                 x:Name="LoadingPageBackup" 
+                                 x:Name="LpLoading" 
                                  Visibility="Collapsed"></userControl:LoadingPage>
     </Grid>
 </Window>

@@ -14,7 +14,6 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Threading;
 using Xceed.Wpf.Toolkit;
 using CheckBox = System.Windows.Controls.CheckBox;
 using MessageBox = System.Windows.MessageBox;
@@ -68,11 +67,7 @@ namespace RimeControl
         private bool _schemeInfoLoading = true;//标识选择Scheme后加载绑定Scheme信息的过程，避免触发信息改变的事件
         //方案
         private ObservableCollection<Schema> _listSchemaList = new ObservableCollection<Schema>();   //方案列表
-
-        //重新部署倒计时
-        private readonly DispatcherTimer _myTimer = new DispatcherTimer();  //计时器
-        private int _intTimeValue;//计时器运行次数
-
+        
         //备份与还原
         private ObservableCollection<BackAndRestoreItems> _dgBackAndRestoreItem;//备份DataGrid数据源
 
@@ -82,7 +77,7 @@ namespace RimeControl
         private int _backupRestoreResult;//备份or还原方法的结果
 
         //GitHub上的最新版本号
-        private string _newVerison;
+        private string _newVersion;
         #endregion
 
 
@@ -290,21 +285,26 @@ namespace RimeControl
 
             //==中英文切换 信息
             Dictionary<string, int> dirCobCtrlL = new Dictionary<string, int>();
-            dirCobCtrlL.Add("屏蔽该切换键", 0);
+            //
             _dirCobCtrlLf.Add(0, "noop");
             _dirCobCtrl.Add("noop", 0);
-            dirCobCtrlL.Add("编码字符上屏并切换至西文", 1);
+            dirCobCtrlL.Add("屏蔽该切换键", 0);
+
             _dirCobCtrlLf.Add(1, "commit_code");
             _dirCobCtrl.Add("commit_code", 1);
-            dirCobCtrlL.Add("候选文字上屏并切换至西文", 2);
+            dirCobCtrlL.Add("编码字符上屏并切换至西文", 1);
+
             _dirCobCtrlLf.Add(2, "commit_text");
             _dirCobCtrl.Add("commit_text", 2);
-            dirCobCtrlL.Add("回车上屏后自动复位到中文", 3);
+            dirCobCtrlL.Add("候选文字上屏并切换至西文", 2);
+
             _dirCobCtrlLf.Add(3, "inline_ascii");
             _dirCobCtrl.Add("inline_ascii", 3);
-            dirCobCtrlL.Add("清除编码并切换至西文", 4);
+            dirCobCtrlL.Add("回车上屏后自动复位到中文", 3);
+
             _dirCobCtrlLf.Add(4, "clear");
             _dirCobCtrl.Add("clear", 4);
+            dirCobCtrlL.Add("清除编码并切换至西文", 4);
             //=绑定下拉框
             //Ctrl 左
             CobCtrlL.ItemsSource = dirCobCtrlL;
@@ -466,8 +466,8 @@ namespace RimeControl
 
             #region 候选数--default.custom.yaml
 
-            string pageSsize = Tools.GetYamlValue(_yamlUserDefaultFile, "menu.page_size");
-            CobPageSize.SelectedValue = Convert.ToInt32(pageSsize);
+            string pageSize = Tools.GetYamlValue(_yamlUserDefaultFile, "menu.page_size");
+            CobPageSize.SelectedValue = Convert.ToInt32(pageSize);
 
             #endregion
 
@@ -600,8 +600,8 @@ namespace RimeControl
             {
                 List<YAML.Node> schemeInfo = _yamlUserWeaselFile.nodeList.Where(n => n.parent == item).ToList();
 
-                Scheme scheme = new Scheme();
-                scheme.id = item.name; //皮肤id
+                Scheme scheme = new Scheme {id = item.name};
+                //皮肤id
                 foreach (YAML.Node infoItem in schemeInfo)
                 {
                     switch (infoItem.name)
@@ -874,7 +874,7 @@ namespace RimeControl
 
         #endregion
 
-        #region 全局部分 控件事件-载入、保存、重新载入、倒计时
+        #region 全局部分 控件事件-载入、保存、重新载入
         /// <summary>
         /// 窗体载入事件
         /// </summary>
@@ -888,8 +888,6 @@ namespace RimeControl
             ProfileLoad();                //配置文件载入
 
             SettingLoad();              //设置数据读取绑定
-            _myTimer.Tick += myTimer_Tick;
-            _myTimer.Interval = new TimeSpan(0, 0, 1);
 
             //加载版本信息
             string version = Properties.Resources.ResourceManager.GetString("app_version");
@@ -903,18 +901,28 @@ namespace RimeControl
             bwCheckReleases.RunWorkerAsync();//开始执行后台任务
         }
 
+        /// <summary>
+        /// 检查版本号后执行
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CheckReleasesCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(_newVerison))
+            if (!string.IsNullOrEmpty(_newVersion))
             {
                 //判断新版本号大于旧版本，显示新版本号
-                if (String.Compare(_newVerison, Properties.Resources.ResourceManager.GetString("app_version"), StringComparison.Ordinal) > 0)
+                if (String.Compare(_newVersion, Properties.Resources.ResourceManager.GetString("app_version"), StringComparison.Ordinal) > 0)
                 {
-                    BtnNewVersion.Content = "有新版本：V" + _newVerison;
+                    BtnNewVersion.Content = "有新版本：V" + _newVersion;
                     BtnNewVersion.Visibility = Visibility.Visible;
                 }
             }
         }
+        /// <summary>
+        /// 检查版本号
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CheckReleases(object sender, DoWorkEventArgs e)
         {
             string url = "https://api.github.com/repos/qzly/RimeControl/releases/latest";
@@ -923,7 +931,7 @@ namespace RimeControl
             Match match = regexTagName.Match(result);
             if (match.Success)
             {
-                _newVerison = match.Value;
+                _newVersion = match.Value;
             }
         }
 
@@ -1102,6 +1110,15 @@ namespace RimeControl
 
                 //将勾选的Schema 的id写入default.custom.yaml 中 patch.schema_list
                 List<Schema> saveSchemas = _listSchemaList.Where(schema => schema.isSelect).ToList();
+
+                // 2019-3-7 19:14 修复全新配置第一次使用RimeControl后输入法被切换为“注音”的问题
+                //将 luna_pinyin 与列表的第一位对调
+                SchemaListOrder(saveSchemas, "luna_pinyin",0);
+                //将 luna_pinyin_fluency 与列表的第二位对调
+                SchemaListOrder(saveSchemas, "luna_pinyin_fluency", 1);
+                //将 luna_pinyin_simp 与列表的第三位对调
+                SchemaListOrder(saveSchemas, "luna_pinyin_simp", 2);
+
                 foreach (Schema saveSchema in saveSchemas)
                 {
                     //如果在 Roaming\Rime目录中把它复制到 用户配置文件夹
@@ -1141,25 +1158,28 @@ namespace RimeControl
         }
 
         /// <summary>
-        /// 保存后部署倒计时  Timer Tick事件
+        /// SchemaList Schema顺序调整
+        /// 为修复全新配置第一次使用RimeControl后输入法被切换为“注音”的问题
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void myTimer_Tick(object sender, EventArgs e)   //timer计时器回调函数
+        /// <param name="listSchema">Schema 列表</param>
+        /// <param name="schemaId">要调整Schema 的id</param>
+        /// <param name="goalIndex">调整的目标索引</param>
+        private void SchemaListOrder(List<Schema> listSchema, string schemaId,int goalIndex)
         {
-            LblTime.Content = 4 - _intTimeValue;
-            _intTimeValue = _intTimeValue + 1;
-            if (_intTimeValue == 5)
+            try
             {
-                //重新载入配置
-                ProfileLoad();
-                SettingLoad();
+                Schema schema = listSchema.Single(s => s.schema_id == schemaId);
+                int lunaPinyinIndex = listSchema.IndexOf(schema);
+                //判断 schemaId 是否在 目标位置，如果不是对调位置
+                if (lunaPinyinIndex != goalIndex)
+                {
+                    listSchema[lunaPinyinIndex] = listSchema[goalIndex];
+                    listSchema[goalIndex] = schema;
+                }
             }
-            if (_intTimeValue > 5)
+            catch (Exception exception)
             {
-                //去掉屏蔽
-                System.Windows.Controls.Panel.SetZIndex(GrdDeploying, -1);//设置GrdDeploying在底层
-                _myTimer.Stop();
+                Console.WriteLine(exception);
             }
         }
 
@@ -1835,12 +1855,12 @@ namespace RimeControl
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void CloseLoadingPage(object sender, RunWorkerCompletedEventArgs e)
+        private void CloseLP_Loading(object sender, RunWorkerCompletedEventArgs e)
         {
             //配置信息重新载入
             LoadBackInfo();
             //关闭加载层
-            LoadingPageBackup.Visibility = Visibility.Collapsed;
+            LpLoading.Visibility = Visibility.Collapsed;
             string msg = _isBackup ? "备份" : "还原";
             msg += _backupRestoreResult == 1 ? "成功" : "失败";
             if (!_isBackup && _backupRestoreResult == 1) msg += "。接下来将重新部署，请耐心等待...";
@@ -1869,12 +1889,12 @@ namespace RimeControl
             //显示加载层,设置提示文字
             _backupRestoreResult = 0;
             _isBackup = true;
-            LoadingPageBackup.Visibility = Visibility.Visible;
-            LoadingPageBackup.LoadingText = "备份中...";
+            LpLoading.Visibility = Visibility.Visible;
+            LpLoading.LoadingText = "备份中...";
 
             BackgroundWorker backupWorker = new BackgroundWorker();
             backupWorker.DoWork += BackupFileWorker;//执行的任务
-            backupWorker.RunWorkerCompleted += CloseLoadingPage;//任务执行完成后的回调
+            backupWorker.RunWorkerCompleted += CloseLP_Loading;//任务执行完成后的回调
             backupWorker.RunWorkerAsync();//开始执行后台任务
         }
 
@@ -1894,12 +1914,12 @@ namespace RimeControl
                         //显示加载层,设置提示文字
                         _backupRestoreResult = 0;
                         _isBackup = false;
-                        LoadingPageBackup.Visibility = Visibility.Visible;
-                        LoadingPageBackup.LoadingText = "还原中...";
+                        LpLoading.Visibility = Visibility.Visible;
+                        LpLoading.LoadingText = "还原中...";
 
                         BackgroundWorker restoreWorker = new BackgroundWorker();
                         restoreWorker.DoWork += RestoreFileWorker;//执行的任务
-                        restoreWorker.RunWorkerCompleted += CloseLoadingPage;//任务执行完成后的回调
+                        restoreWorker.RunWorkerCompleted += CloseLP_Loading;//任务执行完成后的回调
                         restoreWorker.RunWorkerAsync(items.ItemFileName);//开始执行后台任务
                         return;
                     }
@@ -1994,23 +2014,50 @@ namespace RimeControl
         /// </summary>
         private void DeployAndWait()
         {
-            //小狼毫重新部署
-            Process.Start(_strRootFolderPath + "\\WeaselDeployer.exe", "/deploy");
+            //打开屏蔽提示层
+            LpLoading.Visibility = Visibility.Visible;//显示
+            LpLoading.LoadingText = "重新部署中...";
 
-            //保存后等待小狼毫重新部署
-            LblTime.Content = 5;
-            System.Windows.Controls.Panel.SetZIndex(GrdDeploying, 1);//设置GrdDeploying在顶层
-            _intTimeValue = 0;
-            _myTimer.Start();
+            //小狼毫重新部署
+            Process procWeaselDeploy = Process.Start(_strRootFolderPath + "\\WeaselDeployer.exe", "/deploy");
+            if (procWeaselDeploy != null)
+            {
+                //监视进程退出
+                procWeaselDeploy.EnableRaisingEvents = true;
+                //指定退出事件方法
+                procWeaselDeploy.Exited += ProcWeaselDeploy_Exited;
+            }
         }
 
+        /// <summary>
+        /// 小狼毫重新部署完成后重新载入配置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ProcWeaselDeploy_Exited(object sender, EventArgs e)
+        {
+            //交由主线程执行
+            Dispatcher.Invoke(() =>
+            {
+                //重新载入配置
+                ProfileLoad();
+                SettingLoad();
+                //隐藏加载层
+                LpLoading.Visibility = Visibility.Collapsed;
+            });
+        }
+
+        /// <summary>
+        /// 关闭事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             if (MessageBox.Show("配置可能未保存\n是否退出？", "提示", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
             {
                 e.Cancel = true;
             }
-
         }
 
         /// <summary>
