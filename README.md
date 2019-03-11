@@ -14,8 +14,8 @@ Visual Studio 2017
 
 ### 使用的开源软件
 
-* [FontDialogSample](https://github.com/feilongsword/FontDialogSample)
-* [wpftoolkit 开源部分](https://github.com/xceedsoftware/wpftoolkit)
+* [FontDialogSample](https://github.com/feilongsword/FontDialogSample) 协议：没有明确协议
+* [wpftoolkit](https://github.com/xceedsoftware/wpftoolkit)   协议：Microsoft Public License(Ms-PL)
 
 ### 设计参考
 
