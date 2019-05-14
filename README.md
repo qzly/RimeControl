@@ -14,8 +14,8 @@ Visual Studio 2017
 
 ### 使用的开源软件
 
-* [FontDialogSample](https://github.com/feilongsword/FontDialogSample)
-* [wpftoolkit 开源部分](https://github.com/xceedsoftware/wpftoolkit)
+* [FontDialogSample](https://github.com/feilongsword/FontDialogSample) 协议：没有明确协议
+* [wpftoolkit](https://github.com/xceedsoftware/wpftoolkit)   协议：Microsoft Public License(Ms-PL)
 
 ### 设计参考
 
@@ -30,3 +30,9 @@ Visual Studio 2017
 ## 联系方式
 
 邮箱 <1396715343@qq.com>
+
+-----
+
+## 近况说明
+
+最近工作比较繁忙，可能没法更新。您有什么问题或者建议可以在issues提出，也可以给我发邮件。我整理后会抽空更新。谢谢
