@@ -6,126 +6,153 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace RimeControl.Utils
 {
-    public class YAML
+    public class Yaml
     {
         // 所有行
-        private string[] lines;
+        private readonly string[] _lines;
         // 格式化为节点
-        public List<Node> nodeList { get; set; }
+        public List<Node> NodeList { get; set; }
         // 文件所在地址
-        private readonly string path;
+        private readonly string _path;
+        //新的yaml文件
+        private readonly bool _createNewFile;
 
         /// <summary>
         /// Yaml
         /// </summary>
         /// <param name="path">yaml文件路径</param>
-        public YAML(string path)
+        /// <param name="createNewFile">创建新的Yaml文件</param>
+        public Yaml(string path, bool createNewFile):this(path)
         {
-            nodeList = new List<Node>();
-            this.path = path;
-            try
+            _createNewFile = createNewFile;
+        }
+
+        /// <summary>
+        /// Yaml
+        /// </summary>
+        /// <param name="path">yaml文件路径</param>
+        public Yaml(string path)
+        {
+            NodeList = new List<Node>();
+            _path = path;
+            if (!_createNewFile)
             {
-                this.lines = File.ReadAllLines(path);
-                Console.WriteLine(lines);
-                for (int i = 0; i < lines.Length; i++)
+                try
                 {
-                    string line = lines[i];
-                    if (line.Trim() == "")
+                    _lines = File.ReadAllLines(path);
+                    for (int i = 0; i < _lines.Length; i++)
                     {
-                        //Console.WriteLine("空白行，行号：" + (i + 1));
-                        continue;
-                    }
-                    else if (line.Trim().Substring(0, 1) == "#")
-                    {
-                        //Console.WriteLine("注释行，行号：" + (i + 1));
-                        Node nodeC = new Node
+                        string line = _lines[i];
+                        if (line.Trim() == "")
                         {
-                            isComment = true,
-                            name = line.Trim(),
-                            space = FindPreSpace(line)
+                            //Console.WriteLine("空白行，行号：" + (i + 1));
+                            continue;
+                        }
+                        else if (line.Trim().Substring(0, 1) == "#")
+                        {
+                            //Console.WriteLine("注释行，行号：" + (i + 1));
+                            Node nodeC = new Node
+                            {
+                                IsComment = true,
+                                Name = line.Trim(),
+                                Space = FindPreSpace(line)
+                            };
+                            NodeList.Add(nodeC);
+                            continue;
+                        }
+
+                        //在Rime的配置中参数存在奇怪的单独处理
+                        //":": {commit: "："}
+                        Node node = new Node
+                        {
+                            Space = FindPreSpace(line)
                         };
-                        this.nodeList.Add(nodeC);
-                        continue;
-                    }
 
-                    //在Rime的配置中参数存在奇怪的单独处理
-                    //":": {commit: "："}
-                    Node node = new Node
-                    {
-                        space = FindPreSpace(line)
-                    };
-
-                    Match match = Regex.Match(line, ":.*?\\\".*?:");
-                    if (match.Success)
-                    {
-                        //匹配成功，表示是这种特殊情况
-                        int index = match.Index + match.Length;
-                        node.name = line.Substring(0, index - 1).Trim();
-                        node.value = line.Substring(index).Trim();
-                    }
-                    else
-                    {
-                        //处理 raim 中 输入法方案 描述中的网址--以 https?: 开头
-                        //https://zh-yue.wikipedia.org/wiki/%E9%A6%99%E6%B8%AF%E8%AA%9E%E8%A8%80%E5%AD%B8%E5%AD%B8%E6%9C%83%E7%B2%B5%E8%AA%9E%E6%8B%BC%E9%9F%B3%E6%96%B9%E6%A1%88
-                        match = Regex.Match(line.Trim(), "^https?:");
+                        Match match = Regex.Match(line, ":.*?\\\".*?:");
                         if (match.Success)
                         {
-                            //匹配成功，表示是这种特殊情况，对地址进行解码
-                            node.name = System.Web.HttpUtility.UrlDecode(line.Trim());
+                            //匹配成功，表示是这种特殊情况
+                            int index = match.Index + match.Length;
+                            node.Name = line.Substring(0, index - 1).Trim();
+                            node.Value = line.Substring(index).Trim();
                         }
                         else
                         {
-                            string[] kv = Regex.Split(line, ":", RegexOptions.IgnoreCase);
-                            // findPreSpace(line);
-                            node.name = kv[0].Trim();
-
-                            // 去除前后空白符
-                            string fline = line.Trim();
-                            int first = fline.IndexOf(':');
-                            //冒号不存在的情况-----数组元素
-                            if (first > -1)
+                            //处理 raim 中 输入法方案 描述中的网址--以 https?: 开头
+                            //https://zh-yue.wikipedia.org/wiki/%E9%A6%99%E6%B8%AF%E8%AA%9E%E8%A8%80%E5%AD%B8%E5%AD%B8%E6%9C%83%E7%B2%B5%E8%AA%9E%E6%8B%BC%E9%9F%B3%E6%96%B9%E6%A1%88
+                            match = Regex.Match(line.Trim(), "^https?:");
+                            if (match.Success)
                             {
-                                node.value = first == fline.Length - 1 ? null : fline.Substring(first + 2, fline.Length - first - 2);
+                                //匹配成功，表示是这种特殊情况，对地址进行解码
+                                node.Name = HttpUtility.UrlDecode(line.Trim());
                             }
                             else
                             {
-                                node.isArrayEl = true;
+                                string[] kv = Regex.Split(line, ":", RegexOptions.IgnoreCase);
+                                // findPreSpace(line);
+                                node.Name = kv[0].Trim();
+
+                                // 去除前后空白符
+                                string fline = line.Trim();
+                                int first = fline.IndexOf(':');
+                                //冒号不存在的情况-----数组元素
+                                if (first > -1)
+                                {
+                                    node.Value = first == fline.Length - 1 ? null : fline.Substring(first + 2, fline.Length - first - 2);
+                                }
+                                else
+                                {
+                                    node.IsArrayEl = true;
+                                }
                             }
-                        }
                         
+                        }
+
+                        if (node.Name== "schema_id")
+                        {
+
+                        }
+                        //设置父节点
+                        node.Parent = FindParent(node.Space);
+                        NodeList.Add(node);
                     }
 
-                    if (node.name== "schema_id")
-                    {
-
-                    }
-                    //设置父节点
-                    node.parent = FindParent(node.space);
-                    nodeList.Add(node);
+                    Formatting();
                 }
-
-                this.Formatting();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
         }
 
-
-        public List<Node> getCloneNodeList()
+        /// <summary>
+        /// 获取NodeList的clone对象
+        /// </summary>
+        /// <returns></returns>
+        public List<Node> GetCloneNodeList()
         {
             using (Stream objectStream = new MemoryStream())
             {
                 //利用 System.Runtime.Serialization序列化与反序列化完成引用对象的复制  
                 IFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(objectStream, this.nodeList);
+                formatter.Serialize(objectStream, NodeList);
                 objectStream.Seek(0, SeekOrigin.Begin);
                 return (List<Node>)formatter.Deserialize(objectStream);
             }
+        }
+
+        /// <summary>
+        /// 获取Yaml文件所有文本行
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetAllLines()
+        {
+            return _lines;
         }
 
         /// <summary>
@@ -138,29 +165,29 @@ namespace RimeControl.Utils
         public bool Add(string key, string value, bool isArrayEl)
         {
             //为空情况下加注释
-            if (this.nodeList.Count == 0)
+            if (NodeList.Count == 0)
             {
-                Node ComNode = new Node
+                Node comNode = new Node
                 {
-                    isComment = true,
-                    name = "#Custom File Create By RimeControl On " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    IsComment = true,
+                    Name = "#Custom File Create By RimeControl On " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                 };
-                nodeList.Add(ComNode);
+                NodeList.Add(comNode);
 
-                ComNode = new Node
+                comNode = new Node
                 {
-                    isComment = true,
-                    name = "#如果修改，请认真阅读 Rime定製指南 https://github.com/rime/home/wiki/CustomizationGuide 的要求！！"
+                    IsComment = true,
+                    Name = "#如果修改，请认真阅读 Rime定製指南 https://github.com/rime/home/wiki/CustomizationGuide 的要求！！"
                 };
-                nodeList.Add(ComNode);
+                NodeList.Add(comNode);
             }
 
-            Node node = null;//节点
+            Node node;//节点
             string tempKey = key;//存放临时key值
             bool isTop = false;//是否顶层
             while ((node = FindNodeByKey(tempKey)) == null)
             {
-                int index = tempKey.LastIndexOf(".");
+                int index = tempKey.LastIndexOf(".", StringComparison.Ordinal);
                 if (index == -1)
                 {
                     key = "." + key;
@@ -191,24 +218,27 @@ namespace RimeControl.Utils
             {
                 Node newNode = new Node
                 {
-                    name = rKeys[i],
+                    Name = rKeys[i],
                 };
                 if (i != 0 || !isTop)//不是顶层节点
                 {
-                    newNode.parent = pNode;
-                    newNode.space = pNode.space + 2;
-                    newNode.tier = pNode.tier + 1;
+                    newNode.Parent = pNode;
+                    if (pNode != null)
+                    {
+                        newNode.Space = pNode.Space + 2;
+                        newNode.Tier = pNode.Tier + 1;
+                    }
                 }
                 //最后
                 if (i == rKeys.Count() - 1)
                 {
-                    newNode.isArrayEl = isArrayEl;
-                    newNode.value = value;
+                    newNode.IsArrayEl = isArrayEl;
+                    newNode.Value = value;
                 }
-                this.nodeList.Add(newNode);
+                NodeList.Add(newNode);
                 pNode = newNode;
             }
-            this.Formatting();
+            Formatting();
             return true;
         }
 
@@ -223,7 +253,7 @@ namespace RimeControl.Utils
             Node node = FindNodeByKey(key);
             if (node != null)
             {
-                node.value = value;
+                node.Value = value;
                 return true;
             }
             return false;
@@ -239,7 +269,7 @@ namespace RimeControl.Utils
             Node node = FindNodeByKey(key);
             if (node != null)
             {
-                this.nodeList.Remove(node);
+                NodeList.Remove(node);
                 return true;
             }
             return false;
@@ -251,7 +281,7 @@ namespace RimeControl.Utils
             Node node = FindNodeByKey(key);
             if (node != null)
             {
-                return node.value;
+                return node.Value;
             }
             return null;
         }
@@ -259,32 +289,32 @@ namespace RimeControl.Utils
         // 保存到文件中
         public void Save()
         {
-            string[] strContent = new string[this.nodeList.Count];
+            string[] strContent = new string[NodeList.Count];
             int contentIndex = 0;
 
             //StreamWriter stream = File.CreateText(this.path);
-            for (int i = 0; i < nodeList.Count; i++)
+            for (int i = 0; i < NodeList.Count; i++)
             {
-                Node node = nodeList[i];
+                Node node = NodeList[i];
                 StringBuilder sb = new StringBuilder();
-                if (node.isComment)
+                if (node.IsComment)
                 {
-                    sb.Append(node.name);
+                    sb.Append(node.Name);
                 }
                 else
                 {
                     // 放入前置空格
-                    for (int j = 0; j < node.tier; j++)
+                    for (int j = 0; j < node.Tier; j++)
                     {
                         sb.Append("  ");
                     }
-                    sb.Append(node.name);
-                    if (!node.isArrayEl)
+                    sb.Append(node.Name);
+                    if (!node.IsArrayEl)
                     {
                         sb.Append(": ");
-                        if (node.value != null)
+                        if (node.Value != null)
                         {
-                            sb.Append(node.value);
+                            sb.Append(node.Value);
                         }
                     }
                 }
@@ -292,7 +322,7 @@ namespace RimeControl.Utils
                 contentIndex++;
                 //stream.WriteLine(sb.ToString());
             }
-            File.WriteAllLines(this.path, strContent);
+            File.WriteAllLines(_path, strContent);
             //stream.Flush();
             //stream.Close();
         }
@@ -302,10 +332,10 @@ namespace RimeControl.Utils
         public Node FindNodeByKey(string key)
         {
             string[] ks = key.Split('.');
-            for (int i = 0; i < nodeList.Count; i++)
+            for (int i = 0; i < NodeList.Count; i++)
             {
-                Node node = nodeList[i];
-                if (node.name == ks[ks.Length - 1])
+                Node node = NodeList[i];
+                if (node.Name == ks[ks.Length - 1])
                 {
                     // 判断父级
                     Node tem = node;
@@ -315,11 +345,11 @@ namespace RimeControl.Utils
                     {
                         try
                         {
-                            if (tem.parent.name == ks[j])
+                            if (tem.Parent.Name == ks[j])
                             {
                                 count++;
                                 // 继续检查父级
-                                tem = tem.parent;
+                                tem = tem.Parent;
                             }
                         }
                         catch (Exception e)
@@ -344,10 +374,10 @@ namespace RimeControl.Utils
         {
             // 先找出根节点
             List<Node> parentNode = new List<Node>();
-            for (int i = 0; i < nodeList.Count; i++)
+            for (int i = 0; i < NodeList.Count; i++)
             {
-                Node node = nodeList[i];
-                if (node.parent == null)
+                Node node = NodeList[i];
+                if (node.Parent == null)
                 {
                     parentNode.Add(node);
                 }
@@ -362,34 +392,34 @@ namespace RimeControl.Utils
                 FindChildren(node, fNodeList);
             }
 
-            Console.WriteLine("完成");
+            Console.WriteLine(@"完成");
 
             // 指针指向格式化后的
-            nodeList = fNodeList;
+            NodeList = fNodeList;
         }
 
 
         // 层级
-        int tier = 0;
+        int _tier;
         // 查找孩子并进行分层
         private void FindChildren(Node node, List<Node> fNodeList)
         {
             // 当前层 默认第一级，根在外层进行操作
-            tier++;
+            _tier++;
 
-            for (int i = 0; i < nodeList.Count; i++)
+            for (int i = 0; i < NodeList.Count; i++)
             {
-                Node item = nodeList[i];
-                if (item.parent == node)
+                Node item = NodeList[i];
+                if (item.Parent == node)
                 {
-                    item.tier = tier;
+                    item.Tier = _tier;
                     fNodeList.Add(item);
                     FindChildren(item, fNodeList);
                 }
             }
 
             // 走出一层
-            tier--;
+            _tier--;
         }
 
         //查找前缀空格数量
@@ -415,17 +445,17 @@ namespace RimeControl.Utils
         private Node FindParent(int space)
         {
 
-            if (nodeList.Count == 0)
+            if (NodeList.Count == 0)
             {
                 return null;
             }
             else
             {
                 // 倒着找上级
-                for (int i = nodeList.Count - 1; i >= 0; i--)
+                for (int i = NodeList.Count - 1; i >= 0; i--)
                 {
-                    Node node = nodeList[i];
-                    if (node.space < space)
+                    Node node = NodeList[i];
+                    if (node.Space < space)
                     {
                         return node;
                     }
@@ -439,19 +469,19 @@ namespace RimeControl.Utils
         public class Node
         {
             // 名称
-            public string name { get; set; }
+            public string Name { get; set; }
             // 值
-            public string value { get; set; }
+            public string Value { get; set; }
             // 父级
-            public Node parent { get; set; }
+            public Node Parent { get; set; }
             // 前缀空格
-            public int space { get; set; }
+            public int Space { get; set; }
             // 所属层级
-            public int tier { get; set; }
+            public int Tier { get; set; }
             //是否注释行
-            public bool isComment { get; set; }
+            public bool IsComment { get; set; }
             //是否数组元素
-            public bool isArrayEl { get; set; }
+            public bool IsArrayEl { get; set; }
         }
     }
 

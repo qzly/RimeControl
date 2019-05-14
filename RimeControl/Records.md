@@ -1,5 +1,11 @@
 # RimeControl 开发记录
 
+* 20190514
+  1. 修复：在载入Switch key 快捷键设置时处理未知写法（容错）感谢thisistianqi提出问题
+  2. 修复：修复激活候选项中文字和背景（ColorHilitedCandidateText 和 ColorHilitedCandidateBack）代码写反，感谢thisistianqi提出问题
+  3. 添加：添加加自动纠错的支持（需要Rime 0.13.0，Rime 0.13.0开始支持自动纠错）。感谢 Youxikong的建议
+  4. 待办：增强系统兼容性（Windows 7），由于开发是基于Windows 10，其他系统还没有测试，后续改进。
+
 * 20190307  
   1. 修复全新配置第一次使用RimeControl后输入法被切换为“注音”的问题
   2. 更改以前的重新部署加载层一定需要等5秒的问题，现在重新部署完成就自动关闭加载层

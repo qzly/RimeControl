@@ -47,11 +47,11 @@ namespace RimeControl
 
         private string _strRootWeaselPath = "\\data\\weasel.yaml";// 程序安装目录 data目录下 weasel.yaml的文件路径，为了判断哪些Scheme是预设的
 
-        private YAML _yamlUserDefaultFile;                 //default.yaml文件
-        private YAML _yamlUserDefaultCustomFile;         //default.custom.yaml文件
-        private YAML _yamlUserWeaselFile;                  //weasel.yaml文件
-        private YAML _yamlUserWeaselCustomFile;         //weasel.custom.yaml文件
-        private YAML _yamlRootWeaselFile;                  //程序安装目录 data目录下 weasel.yaml文件
+        private Yaml _yamlUserDefaultFile;                 //default.yaml文件
+        private Yaml _yamlUserDefaultCustomFile;         //default.custom.yaml文件
+        private Yaml _yamlUserWeaselFile;                  //weasel.yaml文件
+        private Yaml _yamlUserWeaselCustomFile;         //weasel.custom.yaml文件
+        private Yaml _yamlRootWeaselFile;                  //程序安装目录 data目录下 weasel.yaml文件
 
 
         //中英文切换快捷键 数字与值得相互转换
@@ -345,15 +345,15 @@ namespace RimeControl
         public void ProfileLoad()
         {
             //default.yaml文件
-            _yamlUserDefaultFile = new YAML(_strUserDefaultPath);
+            _yamlUserDefaultFile = new Yaml(_strUserDefaultPath);
             //default.custom.yaml文件
-            _yamlUserDefaultCustomFile = new YAML(_strUserDefaultCustomPath);
+            _yamlUserDefaultCustomFile = new Yaml(_strUserDefaultCustomPath);
             //weasel.yaml文件
-            _yamlUserWeaselFile = new YAML(_strUserWeaselPath);
+            _yamlUserWeaselFile = new Yaml(_strUserWeaselPath);
             //weasel.custom.yaml文件
-            _yamlUserWeaselCustomFile = new YAML(_strUserWeaselCustomPathPath);
+            _yamlUserWeaselCustomFile = new Yaml(_strUserWeaselCustomPathPath);
             //程序安装目录 data目录下 weasel.yaml文件
-            _yamlRootWeaselFile = new YAML(_strRootWeaselPath);
+            _yamlRootWeaselFile = new Yaml(_strRootWeaselPath);
         }
 
         /// <summary>
@@ -483,48 +483,42 @@ namespace RimeControl
             #region switch_key>Control_L--default.custom.yaml
 
             string controlL = Tools.GetYamlValue(_yamlUserDefaultFile, "ascii_composer.switch_key.Control_L");
-            controlL = string.IsNullOrEmpty(controlL) ? "noop" : controlL;//避免不存在时程序无法运行
-            CobCtrlL.SelectedValue = Convert.ToInt32(_dirCobCtrl[controlL]);
+            CobCtrlL.SelectedValue = GetSwitchKeySelectedValue(controlL);//避免不存在时程序无法运行
 
             #endregion
 
             #region switch_key>Control_R--default.custom.yaml
 
             string controlR = Tools.GetYamlValue(_yamlUserDefaultFile, "ascii_composer.switch_key.Control_R");
-            controlR = string.IsNullOrEmpty(controlR) ? "noop" : controlR;//避免不存在时程序无法运行
-            CobCtrlR.SelectedValue = Convert.ToInt32(_dirCobCtrl[controlR]);
+            CobCtrlR.SelectedValue = GetSwitchKeySelectedValue(controlR);//避免不存在时程序无法运行
 
             #endregion
 
             #region switch_key>Shift_L--default.custom.yaml
 
             string shiftL = Tools.GetYamlValue(_yamlUserDefaultFile, "ascii_composer.switch_key.Shift_L");
-            shiftL = string.IsNullOrEmpty(shiftL) ? "noop" : shiftL;//避免不存在时程序无法运行
-            CobShiftL.SelectedValue = Convert.ToInt32(_dirCobCtrl[shiftL]);
+            CobShiftL.SelectedValue = GetSwitchKeySelectedValue(shiftL);//避免不存在时程序无法运行
 
             #endregion
 
             #region switch_key>Shift_R--default.custom.yaml
 
             string shiftR = Tools.GetYamlValue(_yamlUserDefaultFile, "ascii_composer.switch_key.Shift_R");
-            shiftR = string.IsNullOrEmpty(shiftR) ? "noop" : shiftR;//避免不存在时程序无法运行
-            CobShiftR.SelectedValue = Convert.ToInt32(_dirCobCtrl[shiftR]);
+            CobShiftR.SelectedValue = GetSwitchKeySelectedValue(shiftR);//避免不存在时程序无法运行
 
             #endregion
 
             #region switch_key>Caps_Lock--default.custom.yaml
 
             string capsLock = Tools.GetYamlValue(_yamlUserDefaultFile, "ascii_composer.switch_key.Caps_Lock");
-            capsLock = string.IsNullOrEmpty(capsLock) ? "noop" : capsLock;//避免不存在时程序无法运行
-            CobCopsLock.SelectedValue = Convert.ToInt32(_dirCobCtrl[capsLock]);
+            CobCopsLock.SelectedValue = GetSwitchKeySelectedValue(capsLock);//避免不存在时程序无法运行
 
             #endregion
 
             #region switch_key>Eisu_toggle--default.custom.yaml
 
             string eisuToggle = Tools.GetYamlValue(_yamlUserDefaultFile, "ascii_composer.switch_key.Eisu_toggle");
-            eisuToggle = string.IsNullOrEmpty(eisuToggle) ? "noop" : eisuToggle;//避免不存在时程序无法运行
-            CobEisutoggle.SelectedValue = Convert.ToInt32(_dirCobCtrl[eisuToggle]);
+            CobEisutoggle.SelectedValue = GetSwitchKeySelectedValue(eisuToggle);//避免不存在时程序无法运行
 
             #endregion
             #endregion
@@ -539,11 +533,11 @@ namespace RimeControl
 
             #region 快捷键选项
             //获取switcher.hotkeys 节点
-            YAML.Node hotkeysNode = _yamlUserDefaultFile.FindNodeByKey("switcher.hotkeys");
+            Yaml.Node hotkeysNode = _yamlUserDefaultFile.FindNodeByKey("switcher.hotkeys");
             if (hotkeysNode != null)
             {
                 //查询switcher.hotkeys 节点的子节点就是快捷键信息
-                List<YAML.Node> oldHotKeys = _yamlUserDefaultFile.nodeList.Where(n => n.parent == hotkeysNode).ToList();
+                List<Yaml.Node> oldHotKeys = _yamlUserDefaultFile.NodeList.Where(n => n.Parent == hotkeysNode).ToList();
                 CkbHotKey1.IsChecked = false;
                 CkbHotKey2.IsChecked = false;
                 CkbHotKey3.IsChecked = false;
@@ -556,7 +550,7 @@ namespace RimeControl
                 for (int i = 0; i < oldHotKeys.Count; i++)
                 {
                     //- "Control+grave"
-                    string strKey = oldHotKeys[i].name.Replace("- ", "").Trim();//去掉“- ”，并去空格
+                    string strKey = oldHotKeys[i].Name.Replace("- ", "").Trim();//去掉“- ”，并去空格
                     strKey = Tools.RemoveFirstLastQuotationMarks(strKey);// 去掉""
                     switch (i)
                     {
@@ -585,6 +579,27 @@ namespace RimeControl
         }
 
         /// <summary>
+        /// 在载入Switch key 快捷键设置时处理未知写法（容错）
+        /// 未知写法：未在小狼毫快捷键方式定义里面的
+        /// 2019年4月24日 18:20
+        /// 感谢 github 的 thisistianqi 反馈问题
+        /// </summary>
+        /// <param name="strKey"></param>
+        /// <returns></returns>
+        private int GetSwitchKeySelectedValue(string strKey)
+        {
+            int intValue = 0;
+            strKey = string.IsNullOrEmpty(strKey) ? "noop" : strKey;//避免不存在时程序无法运行
+            if (_dirCobCtrl.ContainsKey(strKey))
+            {
+                intValue = _dirCobCtrl[strKey];
+            }
+            return intValue;
+        }
+
+
+
+        /// <summary>
         /// Scheme载入
         /// </summary>
         private void LoadSchemes()
@@ -593,57 +608,57 @@ namespace RimeControl
             _listScheme.Clear();
             //读取weasel.yaml 文件获取所有Scheme
             //在preset_color_schemes节点下,获取所有Scheme节点
-            YAML.Node presetColorSchemes = _yamlUserWeaselFile.FindNodeByKey("preset_color_schemes");
-            List<YAML.Node> allSchemesNode = _yamlUserWeaselFile.nodeList.Where(n => n.parent == presetColorSchemes).ToList();
+            Yaml.Node presetColorSchemes = _yamlUserWeaselFile.FindNodeByKey("preset_color_schemes");
+            List<Yaml.Node> allSchemesNode = _yamlUserWeaselFile.NodeList.Where(n => n.Parent == presetColorSchemes).ToList();
             //遍历Scheme节点，获取出Scheme的皮肤信息
-            foreach (YAML.Node item in allSchemesNode)
+            foreach (Yaml.Node item in allSchemesNode)
             {
-                List<YAML.Node> schemeInfo = _yamlUserWeaselFile.nodeList.Where(n => n.parent == item).ToList();
+                List<Yaml.Node> schemeInfo = _yamlUserWeaselFile.NodeList.Where(n => n.Parent == item).ToList();
 
-                Scheme scheme = new Scheme {id = item.name};
+                Scheme scheme = new Scheme {id = item.Name};
                 //皮肤id
-                foreach (YAML.Node infoItem in schemeInfo)
+                foreach (Yaml.Node infoItem in schemeInfo)
                 {
-                    switch (infoItem.name)
+                    switch (infoItem.Name)
                     {
                         case "name":
-                            scheme.name = Tools.RemoveFirstLastQuotationMarks(infoItem.value.Trim());
+                            scheme.name = Tools.RemoveFirstLastQuotationMarks(infoItem.Value.Trim());
                             break;
                         case "author":
-                            scheme.author = Tools.RemoveFirstLastQuotationMarks(infoItem.value.Trim());
+                            scheme.author = Tools.RemoveFirstLastQuotationMarks(infoItem.Value.Trim());
                             break;
                         case "back_color":
-                            scheme.back_color = Tools.BGR2RGB(infoItem.value.Trim());
+                            scheme.back_color = Tools.Bgr2Rgb(infoItem.Value.Trim());
                             break;
                         case "border_color":
-                            scheme.border_color = Tools.BGR2RGB(infoItem.value.Trim());
+                            scheme.border_color = Tools.Bgr2Rgb(infoItem.Value.Trim());
                             break;
                         case "text_color":
-                            scheme.text_color = Tools.BGR2RGB(infoItem.value.Trim());
+                            scheme.text_color = Tools.Bgr2Rgb(infoItem.Value.Trim());
                             break;
                         case "hilited_text_color":
-                            scheme.hilited_text_color = Tools.BGR2RGB(infoItem.value.Trim());
+                            scheme.hilited_text_color = Tools.Bgr2Rgb(infoItem.Value.Trim());
                             break;
                         case "hilited_back_color":
-                            scheme.hilited_back_color = Tools.BGR2RGB(infoItem.value.Trim());
+                            scheme.hilited_back_color = Tools.Bgr2Rgb(infoItem.Value.Trim());
                             break;
                         case "hilited_candidate_back_color":
-                            scheme.hilited_candidate_back_color = Tools.BGR2RGB(infoItem.value.Trim());
+                            scheme.hilited_candidate_back_color = Tools.Bgr2Rgb(infoItem.Value.Trim());
                             break;
                         case "hilited_candidate_text_color":
-                            scheme.hilited_candidate_text_color = Tools.BGR2RGB(infoItem.value.Trim());
+                            scheme.hilited_candidate_text_color = Tools.Bgr2Rgb(infoItem.Value.Trim());
                             break;
                         case "candidate_text_color":
-                            scheme.candidate_text_color = Tools.BGR2RGB(infoItem.value.Trim());
+                            scheme.candidate_text_color = Tools.Bgr2Rgb(infoItem.Value.Trim());
                             break;
                         case "comment_text_color":
-                            scheme.comment_text_color = Tools.BGR2RGB(infoItem.value.Trim());
+                            scheme.comment_text_color = Tools.Bgr2Rgb(infoItem.Value.Trim());
                             break;
                     }
                 }
                 //判断是否rime预设Scheme：判断在安装目录data下 weasel.yaml 是否存在该Scheme Id，存在就是系统预设Scheme，否则就是自定义Scheme
                 //weasel.custom.yaml  中为 "preset_color_schemes/myTheme"
-                List<YAML.Node> schemeUer = _yamlRootWeaselFile.nodeList.Where(n => n.name == scheme.id).ToList();
+                List<Yaml.Node> schemeUer = _yamlRootWeaselFile.NodeList.Where(n => n.Name == scheme.id).ToList();
                 if (schemeUer.Count == 1)
                 {
                     scheme.isSysScheme = true;
@@ -708,7 +723,7 @@ namespace RimeControl
 
             //Linq not in查询出 在userSchemaListT列表中而不在installSchemaList列表中的 Schema，就是用户自行添加的Schema
             List<Schema> userSchemaList = (from tbUserSchemaListT in userSchemaListT
-                                           where !(from tbInstallSchemaList in installSchemaList select tbInstallSchemaList.schema_id).Contains(tbUserSchemaListT.schema_id)
+                                           where !(from tbInstallSchemaList in installSchemaList select tbInstallSchemaList.SchemaId).Contains(tbUserSchemaListT.SchemaId)
                                            select tbUserSchemaListT).ToList();
             foreach (Schema item in userSchemaList)
             {
@@ -716,13 +731,33 @@ namespace RimeControl
                 installSchemaList.Add(item);
             }
 
+            //=====处理自动纠错功能 translator/enable_correction========
+            //2019年5月13日22:38:03
+            //查询出读取用户配置目录下 下所有  *.schema.yaml文件 中启用了自动纠错功能的Schema
+            List<Schema> enableCorrectionList = (from tbUserSchemaListT in userSchemaListT
+                where tbUserSchemaListT.EnableCorrection
+                select tbUserSchemaListT).ToList();
+            //遍历installSchemaList找到enableCorrectionList中存在的Schema，启用自动纠错功能 EnableCorrection = true;
+            foreach (Schema item in enableCorrectionList)
+            {
+                foreach (Schema itemG in installSchemaList)
+                {
+                    if (itemG.SchemaId==item.SchemaId)
+                    {
+                        itemG.EnableCorrection = true;
+                        itemG.OldEnableCorrection = true;
+                        break;
+                    }
+                }
+            }
+            
             //===读取用户Roaming\Rime目录下的配置文件
             if (Directory.Exists(_userRoamingFolderRime))
             {
                 List<Schema> roamingSchemaList = ReadAllSchemaYaml(_userRoamingFolderRime, false, true);
                 //Linq not in查询出 在roamingSchemaList列表中而不在installSchemaList列表中的 Schema，就是用户自行添加的Schema
                 List<Schema> rsT = (from tbRst in roamingSchemaList
-                                    where !(from tbInstallSchemaList in installSchemaList select tbInstallSchemaList.schema_id).Contains(tbRst.schema_id)
+                                    where !(from tbInstallSchemaList in installSchemaList select tbInstallSchemaList.SchemaId).Contains(tbRst.SchemaId)
                                     select tbRst).ToList();
                 foreach (Schema item in rsT)
                 {
@@ -733,14 +768,14 @@ namespace RimeControl
 
             _listSchemaList = new ObservableCollection<Schema>(installSchemaList);
             //====读取用户正在使用的Schema id  用户目录下build\default.yaml key:schema_list
-            YAML.Node nodeSchemaList = _yamlUserDefaultFile.FindNodeByKey("schema_list");
-            List<YAML.Node> schemaList = _yamlUserDefaultFile.nodeList.Where(n => n.parent == nodeSchemaList).ToList();
+            Yaml.Node nodeSchemaList = _yamlUserDefaultFile.FindNodeByKey("schema_list");
+            List<Yaml.Node> schemaList = _yamlUserDefaultFile.NodeList.Where(n => n.Parent == nodeSchemaList).ToList();
             //批量修改_listSchemaList中正在使用的
             (from tbListSchemaList in _listSchemaList
-             where (from tbSchemaList in schemaList select tbSchemaList.value).Contains(tbListSchemaList.schema_id)
+             where (from tbSchemaList in schemaList select tbSchemaList.Value).Contains(tbListSchemaList.SchemaId)
              select tbListSchemaList)
              .ToList()
-             .ForEach(sScheme => { sScheme.isUsing = true; sScheme.isSelect = true; });
+             .ForEach(sScheme => { sScheme.IsUsing = true; sScheme.IsSelect = true; });
         }
 
         /// <summary>
@@ -774,65 +809,74 @@ namespace RimeControl
 
                         Schema schema = new Schema();
 
-                        YAML tempSchemaYaml = new YAML(file.FullName);
+                        Yaml tempSchemaYaml = new Yaml(file.FullName);
                         //Schema id
                         try
                         {
 
                             string tId = tempSchemaYaml.Read("schema.schema_id").Split('#')[0].Trim();
-                            schema.schema_id = tId;
+                            schema.SchemaId = tId;
                         }
                         catch (Exception e)
                         {
                             Console.WriteLine(e);
                         }
                         //Schema 名称
-                        schema.name = Tools.RemoveFirstLastQuotationMarks(tempSchemaYaml.Read("schema.name"));
+                        schema.Name = Tools.RemoveFirstLastQuotationMarks(tempSchemaYaml.Read("schema.name"));
                         //Schema 版本
-                        schema.version = Tools.RemoveFirstLastQuotationMarks(tempSchemaYaml.Read("schema.version"));
+                        schema.Version = Tools.RemoveFirstLastQuotationMarks(tempSchemaYaml.Read("schema.version"));
 
-                        List<YAML.Node> tNodes; //临时记录信息子节点
+                        List<Yaml.Node> tNodes; //临时记录信息子节点
                         //作者信息
-                        YAML.Node author = tempSchemaYaml.FindNodeByKey("schema.author");
+                        Yaml.Node author = tempSchemaYaml.FindNodeByKey("schema.author");
                         if (author != null)
                         {
-                            tNodes = tempSchemaYaml.nodeList.Where(n => n.parent == author).ToList();
-                            foreach (YAML.Node item in tNodes)
+                            tNodes = tempSchemaYaml.NodeList.Where(n => n.Parent == author).ToList();
+                            foreach (Yaml.Node item in tNodes)
                             {
-                                schema.author += item.name.Trim() + "\r\n";
+                                schema.Author += item.Name.Trim() + "\r\n";
                             }
-                            schema.author = schema.author.Substring(0, schema.author.Count() - 2);
+                            schema.Author = schema.Author.Substring(0, schema.Author.Count() - 2);
                         }
                         //description 描述信息
-                        YAML.Node description = tempSchemaYaml.FindNodeByKey("schema.description");
+                        Yaml.Node description = tempSchemaYaml.FindNodeByKey("schema.description");
                         if (description != null)
                         {
-                            tNodes = tempSchemaYaml.nodeList.Where(n => n.parent == description).ToList();
-                            foreach (YAML.Node item in tNodes)
+                            tNodes = tempSchemaYaml.NodeList.Where(n => n.Parent == description).ToList();
+                            foreach (Yaml.Node item in tNodes)
                             {
-                                schema.description += item.name.Trim() + "\r\n";
-                                List<YAML.Node> ttNodes = tempSchemaYaml.nodeList.Where(n => n.parent == item).ToList();
-                                foreach (YAML.Node ttitem in ttNodes)
+                                schema.Description += item.Name.Trim() + "\r\n";
+                                List<Yaml.Node> ttNodes = tempSchemaYaml.NodeList.Where(n => n.Parent == item).ToList();
+                                foreach (Yaml.Node ttitem in ttNodes)
                                 {
-                                    schema.description += "  " + ttitem.name.Trim() + "\r\n";
+                                    schema.Description += "  " + ttitem.Name.Trim() + "\r\n";
                                 }
                                 //schema.description = schema.description.Substring(0, schema.description.Count() - 2);
                             }
-                            //dependencies 依赖情况
-                            YAML.Node dependencies = tempSchemaYaml.FindNodeByKey("schema.dependencies");
-                            if (dependencies != null)
-                            {
-                                tNodes = tempSchemaYaml.nodeList.Where(n => n.parent == dependencies).ToList();
-                                foreach (YAML.Node item in tNodes)
-                                {
-                                    schema.dependencies += item.name.Replace("- ", "").Trim() + ";";
-                                }
-                                schema.dependencies = schema.dependencies.Substring(0, schema.dependencies.Count() - 1);
-                            }
-                            schema.isSys = isSys;
-                            schema.inRoaming = inRoaming;
-                            listR.Add(schema);
                         }
+
+                        //dependencies 依赖情况
+                        Yaml.Node dependencies = tempSchemaYaml.FindNodeByKey("schema.dependencies");
+                        if (dependencies != null)
+                        {
+                            tNodes = tempSchemaYaml.NodeList.Where(n => n.Parent == dependencies).ToList();
+                            foreach (Yaml.Node item in tNodes)
+                            {
+                                schema.Dependencies += item.Name.Replace("- ", "").Trim() + ";";
+                            }
+                            schema.Dependencies = schema.Dependencies.Substring(0, schema.Dependencies.Count() - 1);
+                        }
+
+                        //读取 translator/enable_correction
+                        string enableCorrection = tempSchemaYaml.Read("translator.enable_correction");
+                        if (!string.IsNullOrEmpty(enableCorrection))
+                        {
+                            schema.EnableCorrection = true;
+                        }
+
+                        schema.IsSys = isSys;
+                        schema.InRoaming = inRoaming;
+                        listR.Add(schema);
                     }
                 }
             }
@@ -943,6 +987,11 @@ namespace RimeControl
         /// <param name="e"></param>
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
+
+            //打开屏蔽提示层
+            LpLoading.Visibility = Visibility.Visible;//显示
+            LpLoading.LoadingText = "保存配置中...";
+
             try
             {
                 #region 常规部分
@@ -1004,13 +1053,13 @@ namespace RimeControl
                 strHotKey4 = "- " + strHotKey4;
 
                 //先移除 default.custom.yaml 中 patch."switcher/hotkeys"节点的所有子节点
-                YAML.Node switcherHotkeys = _yamlUserDefaultCustomFile.FindNodeByKey("patch.\"switcher/hotkeys\"");
+                Yaml.Node switcherHotkeys = _yamlUserDefaultCustomFile.FindNodeByKey("patch.\"switcher/hotkeys\"");
                 if (switcherHotkeys != null)
                 {
-                    List<YAML.Node> removeNodes = _yamlUserDefaultCustomFile.nodeList.Where(rn => rn.parent == switcherHotkeys).ToList();
-                    foreach (YAML.Node removeNode in removeNodes)
+                    List<Yaml.Node> removeNodes = _yamlUserDefaultCustomFile.NodeList.Where(rn => rn.Parent == switcherHotkeys).ToList();
+                    foreach (Yaml.Node removeNode in removeNodes)
                     {
-                        _yamlUserDefaultCustomFile.nodeList.Remove(removeNode);
+                        _yamlUserDefaultCustomFile.NodeList.Remove(removeNode);
                     }
                 }
                 //添加
@@ -1042,10 +1091,10 @@ namespace RimeControl
             ,"hilited_candidate_text_color","candidate_text_color","comment_text_color"};
                 //==在原来的原来的List中查询出旧的Scheme数据并移除
                 //在patch.preset_color_schemes节点下,获取所有Scheme节点
-                List<YAML.Node> oldSchemesNode = _yamlUserWeaselCustomFile.nodeList.Where(n => n.name.Contains("preset_color_schemes/")).ToList();
-                foreach (YAML.Node oldItem in oldSchemesNode)
+                List<Yaml.Node> oldSchemesNode = _yamlUserWeaselCustomFile.NodeList.Where(n => n.Name.Contains("preset_color_schemes/")).ToList();
+                foreach (Yaml.Node oldItem in oldSchemesNode)
                 {
-                    string oldSchemeId = oldItem.name.Trim();
+                    string oldSchemeId = oldItem.Name.Trim();
                     foreach (string oldKey in keys)
                     {
                         string removeKey = "patch." + oldSchemeId + "." + oldKey;
@@ -1061,18 +1110,18 @@ namespace RimeControl
                     _yamlUserWeaselCustomFile.Add(addKey + "name", customScheme.name.Trim(), false);
                     _yamlUserWeaselCustomFile.Add(addKey + "author", customScheme.author.Trim(), false);
 
-                    _yamlUserWeaselCustomFile.Add(addKey + "back_color", Tools.RGB2BGR(customScheme.back_color), false);
-                    _yamlUserWeaselCustomFile.Add(addKey + "border_color", Tools.RGB2BGR(customScheme.border_color), false);
+                    _yamlUserWeaselCustomFile.Add(addKey + "back_color", Tools.Rgb2Bgr(customScheme.back_color), false);
+                    _yamlUserWeaselCustomFile.Add(addKey + "border_color", Tools.Rgb2Bgr(customScheme.border_color), false);
 
-                    _yamlUserWeaselCustomFile.Add(addKey + "text_color", Tools.RGB2BGR(customScheme.text_color), false);
-                    _yamlUserWeaselCustomFile.Add(addKey + "hilited_text_color", Tools.RGB2BGR(customScheme.hilited_text_color), false);
-                    _yamlUserWeaselCustomFile.Add(addKey + "hilited_back_color", Tools.RGB2BGR(customScheme.hilited_back_color), false);
+                    _yamlUserWeaselCustomFile.Add(addKey + "text_color", Tools.Rgb2Bgr(customScheme.text_color), false);
+                    _yamlUserWeaselCustomFile.Add(addKey + "hilited_text_color", Tools.Rgb2Bgr(customScheme.hilited_text_color), false);
+                    _yamlUserWeaselCustomFile.Add(addKey + "hilited_back_color", Tools.Rgb2Bgr(customScheme.hilited_back_color), false);
 
-                    _yamlUserWeaselCustomFile.Add(addKey + "hilited_candidate_back_color", Tools.RGB2BGR(customScheme.hilited_candidate_back_color), false);
-                    _yamlUserWeaselCustomFile.Add(addKey + "hilited_candidate_text_color", Tools.RGB2BGR(customScheme.hilited_candidate_text_color), false);
+                    _yamlUserWeaselCustomFile.Add(addKey + "hilited_candidate_back_color", Tools.Rgb2Bgr(customScheme.hilited_candidate_back_color), false);
+                    _yamlUserWeaselCustomFile.Add(addKey + "hilited_candidate_text_color", Tools.Rgb2Bgr(customScheme.hilited_candidate_text_color), false);
 
-                    _yamlUserWeaselCustomFile.Add(addKey + "candidate_text_color", Tools.RGB2BGR(customScheme.candidate_text_color), false);
-                    _yamlUserWeaselCustomFile.Add(addKey + "comment_text_color", Tools.RGB2BGR(customScheme.comment_text_color), false);
+                    _yamlUserWeaselCustomFile.Add(addKey + "candidate_text_color", Tools.Rgb2Bgr(customScheme.candidate_text_color), false);
+                    _yamlUserWeaselCustomFile.Add(addKey + "comment_text_color", Tools.Rgb2Bgr(customScheme.comment_text_color), false);
                 }
 
                 //========保存 patch.style.color_scheme  使用的Scheme id
@@ -1098,18 +1147,18 @@ namespace RimeControl
                  * switcher/caption
                  */
                 //移除default.custom.yaml 中 patch.schema_list 的所有子节点
-                YAML.Node schemaListNode = _yamlUserDefaultCustomFile.FindNodeByKey("patch.schema_list");
+                Yaml.Node schemaListNode = _yamlUserDefaultCustomFile.FindNodeByKey("patch.schema_list");
                 if (schemaListNode != null)
                 {
-                    List<YAML.Node> removeSchemaNodes = _yamlUserDefaultCustomFile.nodeList.Where(rn => rn.parent == schemaListNode).ToList();
-                    foreach (YAML.Node removeNode in removeSchemaNodes)
+                    List<Yaml.Node> removeSchemaNodes = _yamlUserDefaultCustomFile.NodeList.Where(rn => rn.Parent == schemaListNode).ToList();
+                    foreach (Yaml.Node removeNode in removeSchemaNodes)
                     {
-                        _yamlUserDefaultCustomFile.nodeList.Remove(removeNode);
+                        _yamlUserDefaultCustomFile.NodeList.Remove(removeNode);
                     }
                 }
 
                 //将勾选的Schema 的id写入default.custom.yaml 中 patch.schema_list
-                List<Schema> saveSchemas = _listSchemaList.Where(schema => schema.isSelect).ToList();
+                List<Schema> saveSchemas = _listSchemaList.Where(schema => schema.IsSelect).ToList();
 
                 // 2019-3-7 19:14 修复全新配置第一次使用RimeControl后输入法被切换为“注音”的问题
                 //将 luna_pinyin 与列表的第一位对调
@@ -1122,10 +1171,10 @@ namespace RimeControl
                 foreach (Schema saveSchema in saveSchemas)
                 {
                     //如果在 Roaming\Rime目录中把它复制到 用户配置文件夹
-                    if (saveSchema.inRoaming)
+                    if (saveSchema.InRoaming)
                     {
-                        string schemaFileFromPath = _userRoamingFolderRime + "\\" + saveSchema.schema_id + ".schema.yaml";
-                        string schemaFileToPath = _strUserFolderPath + "\\" + saveSchema.schema_id + ".schema.yaml";
+                        string schemaFileFromPath = _userRoamingFolderRime + "\\" + saveSchema.SchemaId + ".schema.yaml";
+                        string schemaFileToPath = _strUserFolderPath + "\\" + saveSchema.SchemaId + ".schema.yaml";
                         //判断用户目录是否就是  Roaming\Rime目录；如果不是就不再复制文件，否则复制文件
                         if (_userRoamingFolderRime != _strUserFolderPath && File.Exists(schemaFileFromPath))
                         {
@@ -1139,8 +1188,44 @@ namespace RimeControl
                             }
                         }
                     }
-                    _yamlUserDefaultCustomFile.Add("patch.schema_list.- schema: " + saveSchema.schema_id, "", true);
+                    _yamlUserDefaultCustomFile.Add("patch.schema_list.- schema: " + saveSchema.SchemaId, "", true);
                 }
+
+
+                /**
+                 * 2019-5-13 23:28:09
+                 * 保存Schema的自动纠错功能
+                 * 实现：向SchemaName.custom.yaml文件中patch节点下添加    "translator/enable_correction": true
+                 */
+                 //查询出修改前启用自动纠错功能和修改后启用自动纠错功能的Schema列表
+                 List<Schema> correctionSchemas=_listSchemaList.Where(schema=>schema.OldEnableCorrection||schema.EnableCorrection).ToList();
+                //遍历correctionSchemas列表
+                foreach (Schema correctionSchema in correctionSchemas)
+                {
+                    string customYamlPath = _strUserFolderPath + "//" + correctionSchema.SchemaId + ".custom.yaml";
+                    if (!correctionSchema.OldEnableCorrection && correctionSchema.EnableCorrection)
+                    {
+                        //修改前没有启用，修改后启用了自动纠错功能，需要在.custom.yaml中添加 "translator/enable_correction": true
+                        Yaml customYaml=new Yaml(customYamlPath,true);
+                        customYaml.Add("patch.\"translator/enable_correction\"", "true", false);
+                        customYaml.Save();
+                    }
+                    else if (correctionSchema.OldEnableCorrection && !correctionSchema.EnableCorrection)
+                    {
+                        //修改前启用，修改后没有启用。需要在.custom.yaml中移除 "translator/enable_correction": true
+                        if (File.Exists(customYamlPath))
+                        {
+                            Yaml customYaml = new Yaml(customYamlPath);
+                            customYaml.Remove("patch.\"translator/enable_correction\"");
+                            customYaml.Save();
+                        }
+                    }
+                    else
+                    {
+                        //修改前后都启用 或者 修改前后都没有启用的情况，，不做处理
+                    }
+                }
+
 
                 #endregion
 
@@ -1168,13 +1253,17 @@ namespace RimeControl
         {
             try
             {
-                Schema schema = listSchema.Single(s => s.schema_id == schemaId);
-                int lunaPinyinIndex = listSchema.IndexOf(schema);
-                //判断 schemaId 是否在 目标位置，如果不是对调位置
-                if (lunaPinyinIndex != goalIndex)
+                List<Schema> searchListSchemas = listSchema.FindAll(s => s.SchemaId == schemaId);
+                if (searchListSchemas.Count>0)
                 {
-                    listSchema[lunaPinyinIndex] = listSchema[goalIndex];
-                    listSchema[goalIndex] = schema;
+                    Schema schema = searchListSchemas[0];
+                    int lunaPinyinIndex = listSchema.IndexOf(schema);
+                    //判断 schemaId 是否在 目标位置，如果不是对调位置
+                    if (lunaPinyinIndex != goalIndex)
+                    {
+                        listSchema[lunaPinyinIndex] = listSchema[goalIndex];
+                        listSchema[goalIndex] = schema;
+                    }
                 }
             }
             catch (Exception exception)
@@ -1577,12 +1666,15 @@ namespace RimeControl
                             case "ColorHilitedBack":
                                 _listScheme[intSchemeIndex].hilited_back_color = currentColorPicker.SelectedColor.Value;
                                 break;
-
+                            /*
+                             * 2019-4-25 18:21:03 修复 ColorHilitedCandidateText 和 ColorHilitedCandidateBack代码写反
+                             * 感谢 github 的 thisistianqi发现问题
+                             */
                             case "ColorHilitedCandidateText":
-                                _listScheme[intSchemeIndex].hilited_candidate_back_color = currentColorPicker.SelectedColor.Value;
+                                _listScheme[intSchemeIndex].hilited_candidate_text_color = currentColorPicker.SelectedColor.Value;
                                 break;
                             case "ColorHilitedCandidateBack":
-                                _listScheme[intSchemeIndex].hilited_candidate_text_color = currentColorPicker.SelectedColor.Value;
+                                _listScheme[intSchemeIndex].hilited_candidate_back_color = currentColorPicker.SelectedColor.Value;
                                 break;
 
                             case "ColorCandidateText":
@@ -1648,7 +1740,7 @@ namespace RimeControl
                     string strNoSelectYlSchema = "";
                     //获取所有currentSchema依赖或间接依赖的Schema
                     List<Schema> ylSchemas = new List<Schema>();
-                    Tools.getAllSchemaYl(_listSchemaList, ylSchemas, currentSchema);
+                    Tools.GetAllSchemaYl(_listSchemaList, ylSchemas, currentSchema);
                     //排除自身，有些情况下会出现自身
                     if (ylSchemas.IndexOf(currentSchema) > -1)
                     {
@@ -1657,20 +1749,20 @@ namespace RimeControl
                     //遍历判断是否都勾选，取出没有勾选的
                     foreach (Schema ylSchema in ylSchemas)
                     {
-                        if (!ylSchema.isSelect)
+                        if (!ylSchema.IsSelect)
                         {
                             isAllSelect = false;
-                            strNoSelectYlSchema += ylSchema.schema_id + " ";
+                            strNoSelectYlSchema += ylSchema.SchemaId + " ";
                         }
                     }
                     if (!isAllSelect)
                     {
-                        string strMsg = "该Schema:[" + currentSchema.schema_id + "]依赖于或间接依赖于未启用的Schema:[" + strNoSelectYlSchema + "]" + ",将全部启用，是否继续启用?";
+                        string strMsg = "该Schema:[" + currentSchema.SchemaId + "]依赖于或间接依赖于未启用的Schema:[" + strNoSelectYlSchema + "]" + ",将全部启用，是否继续启用?";
                         if (MessageBox.Show(strMsg, "提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                         {
                             foreach (Schema ylSchema in ylSchemas)
                             {
-                                ylSchema.isSelect = true;
+                                ylSchema.IsSelect = true;
                             }
                         }
                         else
@@ -1685,7 +1777,7 @@ namespace RimeControl
                     //--去掉勾选，检查依赖该Schema的Schema
                     //获取所有依赖于或间接依赖于currentSchema的Schema
                     List<Schema> bylSchemas = new List<Schema>();
-                    Tools.getAllSchemaByl(_listSchemaList, bylSchemas, currentSchema);
+                    Tools.GetAllSchemaByl(_listSchemaList, bylSchemas, currentSchema);
                     //排除自身，有些情况下会出现自身
                     if (bylSchemas.IndexOf(currentSchema) > -1)
                     {
@@ -1696,20 +1788,20 @@ namespace RimeControl
                                                //遍历
                     foreach (Schema item in bylSchemas)
                     {
-                        if (item.isSelect)
+                        if (item.IsSelect)
                         {
                             isAllNotSelect = false;
-                            strNoSelectBylSchema += item.schema_id + " ";
+                            strNoSelectBylSchema += item.SchemaId + " ";
                         }
                     }
                     if (!isAllNotSelect)
                     {
-                        string strMsg = "已经启用的Schema:[" + strNoSelectBylSchema + "] 依赖于或间接依赖于该Schema：[" + currentSchema.schema_id + "]，将全部停用。是否继续停用？";
+                        string strMsg = "已经启用的Schema:[" + strNoSelectBylSchema + "] 依赖于或间接依赖于该Schema：[" + currentSchema.SchemaId + "]，将全部停用。是否继续停用？";
                         if (MessageBox.Show(strMsg, "提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                         {
                             foreach (Schema item in bylSchemas)
                             {
-                                item.isSelect = false;
+                                item.IsSelect = false;
                             }
                         }
                         else
@@ -1733,12 +1825,12 @@ namespace RimeControl
             if (DataGridSchema.SelectedItems.Count > 0 && DataGridSchema.SelectedItems[0] is Schema selectedSchema)
             {
                 string strText = string.Empty;
-                strText += "schema_id： " + selectedSchema.schema_id + Environment.NewLine;
-                strText += "名称：  " + selectedSchema.name + Environment.NewLine;
+                strText += "schema_id： " + selectedSchema.SchemaId + Environment.NewLine;
+                strText += "名称：  " + selectedSchema.Name + Environment.NewLine;
                 strText += "作者：" + Environment.NewLine;
-                strText += selectedSchema.author;
+                strText += selectedSchema.Author;
                 strText += Environment.NewLine + "描述：" + Environment.NewLine;
-                strText += selectedSchema.description;
+                strText += selectedSchema.Description;
 
                 TbSchemaInfo.Text = strText;
             }

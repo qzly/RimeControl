@@ -37,7 +37,7 @@ namespace RimeControl.Utils
             return Regex.IsMatch(value, @"^\d*[.]?\d*$");
         }
 
-        public static bool isTel(string value)
+        public static bool IsTel(string value)
         {
             if (string.IsNullOrEmpty(value))
             {
@@ -79,7 +79,7 @@ namespace RimeControl.Utils
         /// </summary>
         /// <param name="color"> Rime颜色BGR </param>
         /// <returns></returns>
-        public static System.Windows.Media.Color BGR2RGB(string color)
+        public static System.Windows.Media.Color Bgr2Rgb(string color)
         {
             string[] s = color.Split('x');
             char[] chars = s[1].ToCharArray();
@@ -91,9 +91,9 @@ namespace RimeControl.Utils
             chars[1] = chars[5];
             chars[5] = t;
 
-            string returncolor = new string(chars);
+            string returnColor = new string(chars);
 
-            Color drawColor = ColorTranslator.FromHtml("#" + returncolor);
+            Color drawColor = ColorTranslator.FromHtml("#" + returnColor);
 
             System.Windows.Media.Color mediaColor = System.Windows.Media.Color.FromArgb(drawColor.A, drawColor.R, drawColor.G, drawColor.B);
             return mediaColor;
@@ -105,7 +105,7 @@ namespace RimeControl.Utils
         /// </summary>
         /// <param name="color"></param>
         /// <returns></returns>
-        public static string RGB2BGR(System.Windows.Media.Color color)
+        public static string Rgb2Bgr(System.Windows.Media.Color color)
         {
             string strColor = color.ToString();
             string[] s = strColor.Split('#');
@@ -121,9 +121,9 @@ namespace RimeControl.Utils
             chars[1] = chars[5];
             chars[5] = t;
 
-            string returncolor = new string(chars);
-            returncolor = "0x" + returncolor;
-            return returncolor;
+            string returnColor = new string(chars);
+            returnColor = "0x" + returnColor;
+            return returnColor;
         }
 
         /// <summary>
@@ -132,10 +132,10 @@ namespace RimeControl.Utils
         /// <param name="yaml">YAML对象</param>
         /// <param name="key">key值</param>
         /// <returns>获取到的值或者null</returns>
-        public static string GetYamlValue(YAML yaml, string key)
+        public static string GetYamlValue(Yaml yaml, string key)
         {
             //没有从 x.yaml 加载
-            return yaml.Read(key); ;
+            return yaml.Read(key);
         }
 
         /// <summary>
@@ -145,10 +145,10 @@ namespace RimeControl.Utils
         /// <param name="key">key值</param>
         /// <param name="value">value值</param>
         /// <returns>是否成功</returns>
-        public static bool SetYamlValue(YAML theYaml, string key, string value)
+        public static bool SetYamlValue(Yaml theYaml, string key, string value)
         {
             key = "patch." + key;
-            bool bolR = false;
+            bool bolR;
             if (theYaml.FindNodeByKey(key) != null)
             {
                 //如果存在，修改
@@ -157,21 +157,22 @@ namespace RimeControl.Utils
             else
             {
                 //如果不存在，添加
-                bolR = theYaml.Add(key, value, false); ;
+                bolR = theYaml.Add(key, value, false);
             }
             return bolR;
         }
 
         /// <summary>
-        /// 获取所有currentSchma依赖或间接依赖的Schema
+        /// 获取所有currentSchema依赖或间接依赖的Schema
         /// </summary>
-        /// <param name="_listSchemaList">所有Schema列表</param>
-        /// <param name="currentSchma">当前Schema</param>
+        /// <param name="listSchemaList">所有Schema列表</param>
+        /// <param name="ylSchemas"></param>
+        /// <param name="currentSchema">当前Schema</param>
         /// <returns></returns>
-        public static void getAllSchemaYl(ObservableCollection<Schema> _listSchemaList, List<Schema> ylSchemas, Schema currentSchma)
+        public static void GetAllSchemaYl(ObservableCollection<Schema> listSchemaList, List<Schema> ylSchemas, Schema currentSchema)
         {
-            //查询出所有 currentSchma 依赖的 Schema
-            List<Schema> ylSchemasT = _listSchemaList.Where(sc => currentSchma.dependencies != null && currentSchma.dependencies.Contains(sc.schema_id)).ToList();
+            //查询出所有 currentSchema 依赖的 Schema
+            List<Schema> ylSchemasT = listSchemaList.Where(sc => currentSchema.Dependencies != null && currentSchema.Dependencies.Contains(sc.SchemaId)).ToList();
             //遍历
             foreach (Schema ylSchema in ylSchemasT)
             {
@@ -180,21 +181,22 @@ namespace RimeControl.Utils
                     //添加到依赖列表
                     ylSchemas.Add(ylSchema);
                     //递归检查上级依赖
-                    getAllSchemaYl(_listSchemaList, ylSchemas, ylSchema);
+                    GetAllSchemaYl(listSchemaList, ylSchemas, ylSchema);
                 }
             }
         }
 
         /// <summary>
-        /// 获取所有依赖于或间接依赖于currentSchma的Schema
+        /// 获取所有依赖于或间接依赖于currentSchema的Schema
         /// </summary>
-        /// <param name="_listSchemaList">所有Schema列表</param>
-        /// <param name="currentSchma">当前Schema</param>
+        /// <param name="listSchemaList">所有Schema列表</param>
+        /// <param name="bylSchemas"></param>
+        /// <param name="currentSchema">当前Schema</param>
         /// <returns></returns>
-        public static void getAllSchemaByl(ObservableCollection<Schema> _listSchemaList, List<Schema> bylSchemas, Schema currentSchma)
+        public static void GetAllSchemaByl(ObservableCollection<Schema> listSchemaList, List<Schema> bylSchemas, Schema currentSchema)
         {
             //查询出所有 依赖于 currentSchma的 Schema
-            List<Schema> bylSchemasT = _listSchemaList.Where(sc => sc.dependencies != null && sc.dependencies.Contains(currentSchma.schema_id)).ToList();
+            List<Schema> bylSchemasT = listSchemaList.Where(sc => sc.Dependencies != null && sc.Dependencies.Contains(currentSchema.SchemaId)).ToList();
             //遍历
             foreach (Schema bylSchema in bylSchemasT)
             {
@@ -203,7 +205,7 @@ namespace RimeControl.Utils
                     //添加到被依赖列表
                     bylSchemas.Add(bylSchema);
                     //递归检查下级被依赖
-                    getAllSchemaByl(_listSchemaList, bylSchemas, bylSchema);
+                    GetAllSchemaByl(listSchemaList, bylSchemas, bylSchema);
                 }
             }
         }

@@ -327,19 +327,26 @@
                         <DataGrid.Columns>
                             <!--自定义CheckBox列 加 UpdateSourceTrigger=PropertyChanged 结束DataGridSchema的编辑状态，解决“选【启用】后一定要在非当前行点一下，这样最后勾选后的才能起效。”的问题 -->
                             <!--<DataGridCheckBoxColumn Binding="{Binding isSelect,UpdateSourceTrigger=PropertyChanged}" Width="60"  Header="启用否" x:Name="ColCkbSelect" />-->
-                            <DataGridTemplateColumn Width="60"  Header="启用否">
+                            <DataGridTemplateColumn Width="50"  Header="启用">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <CheckBox HorizontalAlignment="Center" Click="ColCkbSelect_Click"  IsChecked="{Binding isSelect,UpdateSourceTrigger=PropertyChanged}"/>
+                                        <CheckBox HorizontalAlignment="Center" Click="ColCkbSelect_Click"  IsChecked="{Binding IsSelect,UpdateSourceTrigger=PropertyChanged}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <!--<DataGridCheckBoxColumn Binding="{Binding isUsing}" Header="使用中" Width="48" IsReadOnly="True" />-->
                             <!--<DataGridCheckBoxColumn Binding="{Binding isSys}" Header="预设" Width="56" IsReadOnly="True" />-->
-                            <DataGridTextColumn Binding="{Binding name}" Header="方案名称" IsReadOnly="True"   Width="170"/>
-                            <DataGridTextColumn Binding="{Binding schema_id}" Header="法方案ID" IsReadOnly="True"   Width="196"/>
-                            <DataGridTextColumn Binding="{Binding version}" Header="版本" IsReadOnly="True"  Width="100"/>
-                            <DataGridTextColumn Binding="{Binding dependencies}" Header="依赖" IsReadOnly="True" Width="140" />
+                            <DataGridTextColumn Binding="{Binding Name}" Header="方案名称" IsReadOnly="True" Width="160" />
+                            <DataGridTextColumn Binding="{Binding SchemaId}" Header="法方案ID" IsReadOnly="True"   Width="186"/>
+                            <DataGridTextColumn Binding="{Binding Version}" Header="版本" IsReadOnly="True"  Width="90"/>
+                            <DataGridTextColumn Binding="{Binding Dependencies}" Header="依赖" IsReadOnly="True" Width="135" />
+                            <DataGridTemplateColumn Width="50"  Header="纠错">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox HorizontalAlignment="Center" IsChecked="{Binding EnableCorrection,UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
 
